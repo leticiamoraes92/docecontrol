@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "766773810207",
+    "project_id": "doce-control",
+    "storage_bucket": "doce-control.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:766773810207:android:68e835f96ebe755cbaf12a",
+        "android_client_info": {
+          "package_name": "com.app.docecontrol"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1JAUWTbFK-Q0em2uSiQ7GHT8DxeOpXLg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
