@@ -2,7 +2,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class BancoDados {
-  // Versão 4: Incluída a tabela mercado para lista de compras
+
   static Future<Database> abrirBanco() async {
     String caminho = join(await getDatabasesPath(), 'doce_control.db');
 
@@ -10,13 +10,13 @@ class BancoDados {
       caminho,
       version: 4,
       onCreate: (db, version) async {
-        // Tabela de Clientes
+
         await db.execute('CREATE TABLE clientes (id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, telefone TEXT)');
 
-        // Tabela de Decorações/Doces
+
         await db.execute('CREATE TABLE decoracoes (id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, valor REAL)');
 
-        // Tabela de Pedidos completa
+
         await db.execute('''
           CREATE TABLE pedidos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,7 +37,7 @@ class BancoDados {
           )
         ''');
 
-        // Nova Tabela: Mercado (Lista de Compras)
+
         await db.execute('''
           CREATE TABLE mercado (
             id INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -58,7 +58,7 @@ class BancoDados {
             await db.execute("ALTER TABLE pedidos ADD COLUMN valor_entrega REAL DEFAULT 0.0");
           } catch (e) { print("Erro na migração v3: $e"); }
         }
-        // Migração para Versão 4: Criação da tabela de mercado se não existir
+
         if (oldVersion < 4) {
           try {
             await db.execute('''
@@ -74,7 +74,6 @@ class BancoDados {
     );
   }
 
-  // --- MÉTODOS DE CLIENTES ---
   static Future<void> inserirCliente(String nome, String telefone) async {
     final db = await abrirBanco();
     await db.insert('clientes', {'nome': nome, 'telefone': telefone});
@@ -85,7 +84,7 @@ class BancoDados {
     return await db.query('clientes', orderBy: 'nome ASC');
   }
 
-  // --- MÉTODOS DE DECORAÇÕES ---
+
   static Future<void> inserirDecoracao(String nome, double valor) async {
     final db = await abrirBanco();
     await db.insert('decoracoes', {'nome': nome, 'valor': valor});
@@ -106,7 +105,6 @@ class BancoDados {
     await db.delete('decoracoes', where: 'id = ?', whereArgs: [id]);
   }
 
-  // --- MÉTODOS DE PEDIDOS (AGENDAMENTOS) ---
   static Future<void> inserirPedido(
       int idCliente, int idDecoracao, String observacao, int quantidade,
       double total, double entrada, double restante, String massa,
@@ -152,7 +150,7 @@ class BancoDados {
     await db.delete('pedidos', where: 'id = ?', whereArgs: [id]);
   }
 
-  // --- MÉTODOS DE RELATÓRIO ---
+
   static Future<List<Map<String, dynamic>>> buscarRelatorioMensal(int mes, int ano) async {
     final db = await abrirBanco();
     String mesFormatado = mes.toString().padLeft(2, '0');
@@ -167,7 +165,6 @@ class BancoDados {
     ''');
   }
 
-  // --- MÉTODOS DE MERCADO (LISTA DE COMPRAS) ---
   static Future<void> inserirItemMercado(String item) async {
     final db = await abrirBanco();
     await db.insert('mercado', {'item': item, 'comprado': 0});

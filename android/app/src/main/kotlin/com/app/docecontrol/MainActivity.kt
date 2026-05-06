@@ -1,4 +1,4 @@
-package com.example.docecontrol
+package com.app.docecontrol
 
 import io.flutter.embedding.android.FlutterActivity
 
