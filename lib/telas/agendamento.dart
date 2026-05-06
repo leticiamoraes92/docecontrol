@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../database/bancodados.dart';
 import '../widgets/widget_input.dart';
 import '../widgets/widget_button.dart';
+import '../models/pedido_model.dart';
+import '../services/firebase_service.dart';
 
 class AgendamentoScreen extends StatefulWidget {
   const AgendamentoScreen({super.key});
@@ -81,6 +84,7 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
     if (picked != null) setState(() => horarioController.text = picked.format(context));
   }
 
+  // MÉTODO ATUALIZADO: Salva no SQLite E no Firebase
   void salvar() async {
     if (clienteSelecionado == null || decoracaoSelecionada == null || dataController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -88,8 +92,15 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
           backgroundColor: Colors.orange));
       return;
     }
+
     setState(() => carregando = true);
+
     try {
+
+      var clienteObj = clientes.firstWhere((c) => c['id'] == clienteSelecionado);
+      var doceObj = decoracoes.firstWhere((d) => d['id'] == decoracaoSelecionada);
+
+
       await BancoDados.inserirPedido(
         clienteSelecionado!,
         decoracaoSelecionada!,
@@ -105,9 +116,31 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
         enderecoController.text,
         valorEntrega,
       );
+
+
+      PedidoModel novoPedido = PedidoModel(
+        cliente: clienteObj['nome'],
+        doce: doceObj['nome'],
+        quantidade: int.tryParse(quantidadeController.text) ?? 0,
+        total: total,
+        data: dataController.text,
+        status: 'Pendente',
+      );
+
+      await FirebaseService().salvarPedido(novoPedido);
       Navigator.pop(context, true);
+
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Agendamento salvo com sucesso (Local e Nuvem)!"),
+        backgroundColor: Colors.green,
+      ));
+
     } catch (e) {
       print("Erro ao salvar: $e");
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Erro ao sincronizar com a nuvem."),
+        backgroundColor: Colors.red,
+      ));
     } finally {
       setState(() => carregando = false);
     }
@@ -129,7 +162,6 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child: Column(
           children: [
-
             _buildCard(
               titulo: "1. CLIENTE E DOCE",
               icone: Icons.person_outline,
