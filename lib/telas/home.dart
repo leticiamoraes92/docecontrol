@@ -7,6 +7,7 @@ import 'relatorio.dart';
 import 'lista_mercado.dart';
 
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
 
   Widget cardMenu({
     required BuildContext context,
@@ -23,14 +24,14 @@ class HomeScreen extends StatelessWidget {
       },
 
       child: Card(
-        elevation: 4,
+        elevation: 5,
 
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
         ),
 
         child: Container(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
 
           child: Row(
             children: [
@@ -46,19 +47,19 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
 
               Expanded(
                 child: Text(
                   titulo,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
 
-              Icon(Icons.arrow_forward_ios),
+              const Icon(Icons.arrow_forward_ios),
             ],
           ),
         ),
@@ -71,48 +72,52 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
 
+      backgroundColor: const Color(0xFFF8F4F8),
+
       appBar: AppBar(
-        title: Text("Doce Control"),
+        title: const Text("Doce Control"),
         centerTitle: true,
+        backgroundColor: Colors.pink,
+        foregroundColor: Colors.white,
+        elevation: 0,
       ),
 
       body: Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
 
         child: ListView(
           children: [
 
-            SizedBox(height: 10),
-
+            const SizedBox(height: 10),
 
             Center(
               child: Image.asset(
                 'assets/imagem/logo.jpeg',
-                height: 160,
+                height: 170,
               ),
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-            Text(
+            const Text(
               "Bem-vinda, Letícia 🍩",
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 26,
                 fontWeight: FontWeight.bold,
               ),
             ),
 
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
 
             Text(
-              "Gerencie pedidos, clientes e entregas",
+              "Gerencie pedidos, clientes, entregas e pagamentos",
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[700],
               ),
             ),
 
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
 
             cardMenu(
               context: context,
@@ -121,7 +126,7 @@ class HomeScreen extends StatelessWidget {
               tela: ClienteScreen(),
             ),
 
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
 
             cardMenu(
               context: context,
@@ -130,7 +135,7 @@ class HomeScreen extends StatelessWidget {
               tela: DecoracaoScreen(),
             ),
 
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
 
             cardMenu(
               context: context,
@@ -139,7 +144,7 @@ class HomeScreen extends StatelessWidget {
               tela: AgendamentoScreen(),
             ),
 
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
 
             cardMenu(
               context: context,
@@ -148,16 +153,16 @@ class HomeScreen extends StatelessWidget {
               tela: ControleAgendamentoScreen(),
             ),
 
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
 
             cardMenu(
               context: context,
               icone: Icons.bar_chart,
               titulo: "Relatórios",
-              tela: RelatorioScreen(),
+              tela: RelatorioFinanceiroScreen(),
             ),
 
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
 
             cardMenu(
               context: context,
@@ -166,7 +171,50 @@ class HomeScreen extends StatelessWidget {
               tela: ListaMercadoScreen(),
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 30),
+
+            Card(
+              color: Colors.pink.shade50,
+              elevation: 2,
+
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+
+              child: const Padding(
+                padding: EdgeInsets.all(18),
+
+                child: Column(
+                  children: [
+
+                    Icon(
+                      Icons.favorite,
+                      color: Colors.pink,
+                      size: 40,
+                    ),
+
+                    SizedBox(height: 10),
+
+                    Text(
+                      "Doce Control",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    SizedBox(height: 5),
+
+                    Text(
+                      "Sistema de gerenciamento para confeitaria",
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
           ],
         ),
       ),

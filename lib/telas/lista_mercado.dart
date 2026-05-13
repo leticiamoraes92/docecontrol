@@ -17,7 +17,7 @@ class _ListaMercadoScreenState extends State<ListaMercadoScreen> {
   @override
   void initState() {
     super.initState();
-    _carregarItens(); //
+    _carregarItens(); 
   }
 
   void _carregarItens() async {
