@@ -31,7 +31,6 @@ class PedidoModel {
     };
   }
 
-  // Método exigido pelo Danilo: Recebe o JSON do Firebase e transforma em Objeto
   factory PedidoModel.fromSnapshot(DocumentSnapshot doc) {
     return PedidoModel(
       id: doc.id,

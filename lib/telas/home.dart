@@ -7,133 +7,167 @@ import 'relatorio.dart';
 import 'lista_mercado.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
 
-  final Color doceRosa = const Color(0xFFF06292);
-  final Color doceRoxo = const Color(0xFF7E57C2);
+  Widget cardMenu({
+    required BuildContext context,
+    required IconData icone,
+    required String titulo,
+    required Widget tela,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => tela),
+        );
+      },
 
-  @override
-  Widget build(BuildContext context) {
+      child: Card(
+        elevation: 4,
 
-    final double screenHeight = MediaQuery.of(context).size.height;
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+        ),
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
-      body: Column(
-        children: [
+        child: Container(
+          padding: EdgeInsets.all(20),
 
-          Container(
-            width: double.infinity,
-            height: screenHeight * 0.28,
-            decoration: BoxDecoration(
-              color: doceRosa,
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(50),
-                bottomRight: Radius.circular(50),
+          child: Row(
+            children: [
+
+              CircleAvatar(
+                radius: 28,
+                backgroundColor: Colors.pink.shade100,
+
+                child: Icon(
+                  icone,
+                  color: Colors.pink,
+                  size: 30,
+                ),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: doceRosa.withOpacity(0.3),
-                  blurRadius: 15,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: Center(
-              child: Container(
-                margin: const EdgeInsets.only(top: 20),
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: ClipOval(
-                  child: Image.asset(
-                    'assets/imagem/logo.jpeg',
 
-                    height: screenHeight * 0.14,
-                    width: screenHeight * 0.14,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        Icon(Icons.cake, size: 70, color: doceRosa),
+              SizedBox(width: 20),
+
+              Expanded(
+                child: Text(
+                  titulo,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-            ),
+
+              Icon(Icons.arrow_forward_ios),
+            ],
           ),
-
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(25, 15, 25, 10),
-              child: GridView.count(
-
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                crossAxisSpacing: 18,
-                mainAxisSpacing: 18,
-
-                childAspectRatio: 1.35,
-                children: [
-                  _itemMenu(context, "Clientes", Icons.people_alt_rounded, doceRoxo, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ClienteScreen()));
-                  }),
-                  _itemMenu(context, "Doces", Icons.auto_awesome_mosaic_rounded, doceRosa, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => DecoracaoScreen()));
-                  }),
-                  _itemMenu(context, "Agendar", Icons.calendar_month_rounded, doceRosa, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => AgendamentoScreen()));
-                  }),
-                  _itemMenu(context, "Controle", Icons.analytics_rounded, doceRoxo, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ControleAgendamentoScreen()));
-                  }),
-                  _itemMenu(context, "Financeiro", Icons.bar_chart_rounded, Colors.green[400]!, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => RelatorioFinanceiroScreen()));
-                  }),
-                  _itemMenu(context, "Mercado", Icons.shopping_basket_rounded, Colors.orange[400]!, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ListaMercadoScreen()));
-                  }),
-                ],
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _itemMenu(BuildContext context, String rotulo, IconData icone, Color cor, VoidCallback acao) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          )
-        ],
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+
+      appBar: AppBar(
+        title: Text("Doce Control"),
+        centerTitle: true,
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: acao,
-          borderRadius: BorderRadius.circular(22),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icone, size: 32, color: cor),
-              const SizedBox(height: 8),
-              Text(
-                rotulo,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[800],
-                  fontSize: 13,
-                ),
+
+      body: Padding(
+        padding: EdgeInsets.all(20),
+
+        child: ListView(
+          children: [
+
+            SizedBox(height: 10),
+
+
+            Center(
+              child: Image.asset(
+                'assets/imagem/logo.jpeg',
+                height: 160,
               ),
-            ],
-          ),
+            ),
+
+            SizedBox(height: 20),
+
+            Text(
+              "Bem-vinda, Letícia 🍩",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            SizedBox(height: 8),
+
+            Text(
+              "Gerencie pedidos, clientes e entregas",
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[700],
+              ),
+            ),
+
+            SizedBox(height: 30),
+
+            cardMenu(
+              context: context,
+              icone: Icons.people,
+              titulo: "Clientes",
+              tela: ClienteScreen(),
+            ),
+
+            SizedBox(height: 15),
+
+            cardMenu(
+              context: context,
+              icone: Icons.cake,
+              titulo: "Decorações",
+              tela: DecoracaoScreen(),
+            ),
+
+            SizedBox(height: 15),
+
+            cardMenu(
+              context: context,
+              icone: Icons.calendar_month,
+              titulo: "Agendamentos",
+              tela: AgendamentoScreen(),
+            ),
+
+            SizedBox(height: 15),
+
+            cardMenu(
+              context: context,
+              icone: Icons.fact_check,
+              titulo: "Controle de Pedidos",
+              tela: ControleAgendamentoScreen(),
+            ),
+
+            SizedBox(height: 15),
+
+            cardMenu(
+              context: context,
+              icone: Icons.bar_chart,
+              titulo: "Relatórios",
+              tela: RelatorioScreen(),
+            ),
+
+            SizedBox(height: 15),
+
+            cardMenu(
+              context: context,
+              icone: Icons.shopping_cart,
+              titulo: "Lista de Mercado",
+              tela: ListaMercadoScreen(),
+            ),
+
+            SizedBox(height: 20),
+          ],
         ),
       ),
     );
