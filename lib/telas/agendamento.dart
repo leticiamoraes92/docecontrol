@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../database/bancodados.dart';
 import '../widgets/widget_input.dart';
-import '../widgets/widget_button.dart';
 import '../models/pedido_model.dart';
 import '../services/firebase_service.dart';
 
@@ -10,28 +9,33 @@ class AgendamentoScreen extends StatefulWidget {
   const AgendamentoScreen({super.key});
 
   @override
-  _AgendamentoScreenState createState() => _AgendamentoScreenState();
+  State<AgendamentoScreen> createState() => _AgendamentoScreenState();
 }
 
 class _AgendamentoScreenState extends State<AgendamentoScreen> {
+
   final Color doceRosa = const Color(0xFFF06292);
   final Color doceRoxo = const Color(0xFF7E57C2);
 
   List clientes = [];
   List decoracoes = [];
+
   bool carregando = false;
 
   int? clienteSelecionado;
   int? decoracaoSelecionada;
+
   double valorUnitario = 0;
   double total = 0;
   double restante = 0;
   double valorEntrega = 0;
+
   String tipoEntrega = "Retirada";
 
   final quantidadeController = TextEditingController();
   final entradaController = TextEditingController();
   final entregaValorController = TextEditingController(text: "0");
+
   final massaController = TextEditingController();
   final dataController = TextEditingController();
   final horarioController = TextEditingController();
@@ -47,6 +51,7 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
   void carregarDados() async {
     final c = await BancoDados.listarClientes();
     final d = await BancoDados.listarDecoracoes();
+
     setState(() {
       clientes = c;
       decoracoes = d;
@@ -55,51 +60,97 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
 
   void calcular() {
     setState(() {
-      double qtd = double.tryParse(quantidadeController.text.replaceAll(',', '.')) ?? 0;
-      double entrada = double.tryParse(entradaController.text.replaceAll(',', '.')) ?? 0;
 
-      valorEntrega = tipoEntrega == "Entrega"
-          ? (double.tryParse(entregaValorController.text.replaceAll(',', '.')) ?? 0)
+      double qtd =
+          double.tryParse(
+              quantidadeController.text.replaceAll(',', '.')
+          ) ?? 0;
+
+      double entrada =
+          double.tryParse(
+              entradaController.text.replaceAll(',', '.')
+          ) ?? 0;
+
+      valorEntrega =
+      tipoEntrega == "Entrega"
+          ? (double.tryParse(
+          entregaValorController.text.replaceAll(',', '.')
+      ) ?? 0)
           : 0;
 
       total = (qtd * valorUnitario) + valorEntrega;
+
       restante = total - entrada;
     });
   }
 
   Future<void> _pickDate() async {
+
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2030),
     );
+
     if (picked != null) {
-      setState(() => dataController.text = "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}");
+
+      setState(() {
+
+        dataController.text =
+        "${picked.day.toString().padLeft(2, '0')}/"
+            "${picked.month.toString().padLeft(2, '0')}/"
+            "${picked.year}";
+      });
     }
   }
 
   Future<void> _pickTime() async {
-    TimeOfDay? picked = await showTimePicker(context: context, initialTime: TimeOfDay.now());
-    if (picked != null) setState(() => horarioController.text = picked.format(context));
+
+    TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (picked != null) {
+
+      setState(() {
+        horarioController.text = picked.format(context);
+      });
+    }
   }
 
-  // MÉTODO ATUALIZADO: Salva no SQLite E no Firebase
   void salvar() async {
-    if (clienteSelecionado == null || decoracaoSelecionada == null || dataController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Preencha os campos obrigatórios!", style: TextStyle(color: Colors.white)),
-          backgroundColor: Colors.orange));
+
+    if (clienteSelecionado == null ||
+        decoracaoSelecionada == null ||
+        dataController.text.isEmpty) {
+
+      ScaffoldMessenger.of(context).showSnackBar(
+
+        const SnackBar(
+          content: Text(
+            "Preencha os campos obrigatórios!",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.orange,
+        ),
+      );
+
       return;
     }
 
-    setState(() => carregando = true);
+    setState(() {
+      carregando = true;
+    });
 
     try {
 
-      var clienteObj = clientes.firstWhere((c) => c['id'] == clienteSelecionado);
-      var doceObj = decoracoes.firstWhere((d) => d['id'] == decoracaoSelecionada);
+      var clienteObj = clientes.firstWhere(
+              (c) => c['id'] == clienteSelecionado);
 
+      var doceObj = decoracoes.firstWhere(
+              (d) => d['id'] == decoracaoSelecionada);
 
       await BancoDados.inserirPedido(
         clienteSelecionado!,
@@ -107,7 +158,9 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
         observacaoController.text,
         int.tryParse(quantidadeController.text) ?? 0,
         total,
-        double.tryParse(entradaController.text.replaceAll(',', '.')) ?? 0.0,
+        double.tryParse(
+            entradaController.text.replaceAll(',', '.')
+        ) ?? 0.0,
         restante,
         massaController.text,
         dataController.text,
@@ -116,7 +169,6 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
         enderecoController.text,
         valorEntrega,
       );
-
 
       PedidoModel novoPedido = PedidoModel(
         cliente: clienteObj['nome'],
@@ -128,87 +180,212 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
       );
 
       await FirebaseService().salvarPedido(novoPedido);
+
       Navigator.pop(context, true);
 
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Agendamento salvo com sucesso (Local e Nuvem)!"),
-        backgroundColor: Colors.green,
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+
+        const SnackBar(
+          content: Text(
+            "Agendamento salvo com sucesso!",
+          ),
+          backgroundColor: Colors.green,
+        ),
+      );
 
     } catch (e) {
+
       print("Erro ao salvar: $e");
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Erro ao sincronizar com a nuvem."),
-        backgroundColor: Colors.red,
-      ));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+
+        const SnackBar(
+          content: Text(
+            "Erro ao salvar pedido.",
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+
     } finally {
-      setState(() => carregando = false);
+
+      setState(() {
+        carregando = false;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
+
       backgroundColor: const Color(0xFFF5F5F5),
+
       appBar: AppBar(
-        title: const Text("Novo Agendamento", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: const Text(
+          "Novo Agendamento",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+
         backgroundColor: doceRosa,
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
+
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
       ),
+
       body: carregando
-          ? Center(child: CircularProgressIndicator(color: doceRosa))
+
+          ? Center(
+        child: CircularProgressIndicator(
+          color: doceRosa,
+        ),
+      )
+
           : SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 20,
+        ),
+
         child: Column(
+
           children: [
+
             _buildCard(
+
               titulo: "1. CLIENTE E DOCE",
               icone: Icons.person_outline,
+
               conteudo: Column(
+
                 children: [
+
                   DropdownButtonFormField<int>(
+
                     value: clienteSelecionado,
-                    decoration: const InputDecoration(labelText: "Selecionar Cliente"),
-                    onChanged: (v) => setState(() => clienteSelecionado = v),
-                    items: clientes.map<DropdownMenuItem<int>>((c) => DropdownMenuItem(value: c['id'], child: Text(c['nome']))).toList(),
-                  ),
-                  const SizedBox(height: 15),
-                  DropdownButtonFormField<int>(
-                    value: decoracaoSelecionada,
-                    decoration: const InputDecoration(labelText: "Tipo de Doce"),
+
+                    decoration: const InputDecoration(
+                      labelText: "Selecionar Cliente",
+                    ),
+
                     onChanged: (v) {
+
                       setState(() {
+                        clienteSelecionado = v;
+                      });
+                    },
+
+                    items: clientes
+                        .map<DropdownMenuItem<int>>(
+                          (c) => DropdownMenuItem(
+                        value: c['id'],
+                        child: Text(c['nome']),
+                      ),
+                    ).toList(),
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  DropdownButtonFormField<int>(
+
+                    value: decoracaoSelecionada,
+
+                    decoration: const InputDecoration(
+                      labelText: "Tipo de Doce",
+                    ),
+
+                    onChanged: (v) {
+
+                      setState(() {
+
                         decoracaoSelecionada = v;
-                        var d = decoracoes.firstWhere((item) => item['id'] == v);
-                        valorUnitario = double.tryParse(d['valor'].toString()) ?? 0.0;
+
+                        var d = decoracoes.firstWhere(
+                                (item) => item['id'] == v);
+
+                        valorUnitario =
+                            double.tryParse(
+                                d['valor'].toString()
+                            ) ?? 0.0;
+
                         calcular();
                       });
                     },
-                    items: decoracoes.map<DropdownMenuItem<int>>((d) => DropdownMenuItem(value: d['id'], child: Text(d['nome']))).toList(),
+
+                    items: decoracoes
+                        .map<DropdownMenuItem<int>>(
+                          (d) => DropdownMenuItem(
+                        value: d['id'],
+                        child: Text(d['nome']),
+                      ),
+                    ).toList(),
                   ),
+
                   const SizedBox(height: 15),
-                  InputTextos("Massa/Sabor", controller: massaController),
+
+                  InputTextos(
+                    "Massa/Sabor",
+                    controller: massaController,
+                  ),
                 ],
               ),
             ),
 
             const SizedBox(height: 12),
 
+
             _buildCard(
+
               titulo: "2. FINANCEIRO",
               icone: Icons.monetization_on_outlined,
+
               conteudo: Column(
+
                 children: [
-                  InputTextos("Quantidade", controller: quantidadeController, tipo: TextInputType.number, onChanged: (v) => calcular()),
+
+                  InputTextos(
+                    "Quantidade",
+                    controller: quantidadeController,
+                    tipo: TextInputType.number,
+                    onChanged: (v) => calcular(),
+                  ),
+
                   const SizedBox(height: 12),
-                  InputTextos("Entrada (R\$)", controller: entradaController, tipo: TextInputType.number, onChanged: (v) => calcular()),
+
+                  InputTextos(
+                    "Entrada (R\$)",
+                    controller: entradaController,
+                    tipo: TextInputType.number,
+                    onChanged: (v) => calcular(),
+                  ),
+
                   const SizedBox(height: 20),
+
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+
+                    mainAxisAlignment:
+                    MainAxisAlignment.spaceAround,
+
                     children: [
-                      _resumoFinanceiro("TOTAL", total, Colors.black),
-                      _resumoFinanceiro("FALTA", restante, doceRosa),
+
+                      _resumoFinanceiro(
+                        "TOTAL",
+                        total,
+                        Colors.black,
+                      ),
+
+                      _resumoFinanceiro(
+                        "FALTA",
+                        restante,
+                        doceRosa,
+                      ),
                     ],
                   )
                 ],
@@ -217,39 +394,111 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
 
             const SizedBox(height: 12),
 
+
             _buildCard(
+
               titulo: "3. DATA E ENTREGA",
               icone: Icons.calendar_month_outlined,
+
               conteudo: Column(
+
                 children: [
+
                   Row(
+
                     children: [
-                      Expanded(child: InkWell(onTap: _pickDate, child: AbsorbPointer(child: InputTextos("Data", controller: dataController)))),
+
+                      Expanded(
+
+                        child: InkWell(
+
+                          onTap: _pickDate,
+
+                          child: AbsorbPointer(
+
+                            child: InputTextos(
+                              "Data",
+                              controller: dataController,
+                            ),
+                          ),
+                        ),
+                      ),
+
                       const SizedBox(width: 12),
-                      Expanded(child: InkWell(onTap: _pickTime, child: AbsorbPointer(child: InputTextos("Hora", controller: horarioController)))),
+
+                      Expanded(
+
+                        child: InkWell(
+
+                          onTap: _pickTime,
+
+                          child: AbsorbPointer(
+
+                            child: InputTextos(
+                              "Hora",
+                              controller: horarioController,
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
+
                   const SizedBox(height: 12),
+
                   DropdownButtonFormField<String>(
+
                     value: tipoEntrega,
-                    decoration: const InputDecoration(labelText: "Tipo de Entrega"),
+
+                    decoration: const InputDecoration(
+                      labelText: "Tipo de Entrega",
+                    ),
+
                     onChanged: (v) {
+
                       setState(() {
+
                         tipoEntrega = v!;
-                        if (tipoEntrega == "Retirada") entregaValorController.text = "0";
+
+                        if (tipoEntrega == "Retirada") {
+                          entregaValorController.text = "0";
+                        }
+
                         calcular();
                       });
                     },
+
                     items: const [
-                      DropdownMenuItem(value: "Retirada", child: Text("Retirada")),
-                      DropdownMenuItem(value: "Entrega", child: Text("Entrega")),
+
+                      DropdownMenuItem(
+                        value: "Retirada",
+                        child: Text("Retirada"),
+                      ),
+
+                      DropdownMenuItem(
+                        value: "Entrega",
+                        child: Text("Entrega"),
+                      ),
                     ],
                   ),
+
                   if (tipoEntrega == "Entrega") ...[
+
                     const SizedBox(height: 12),
-                    InputTextos("Valor da Entrega (R\$)", controller: entregaValorController, tipo: TextInputType.number, onChanged: (v) => calcular()),
+
+                    InputTextos(
+                      "Valor da Entrega (R\$)",
+                      controller: entregaValorController,
+                      tipo: TextInputType.number,
+                      onChanged: (v) => calcular(),
+                    ),
+
                     const SizedBox(height: 12),
-                    InputTextos("Endereço Completo", controller: enderecoController),
+
+                    InputTextos(
+                      "Endereço Completo",
+                      controller: enderecoController,
+                    ),
                   ],
                 ],
               ),
@@ -257,15 +506,77 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
 
             const SizedBox(height: 12),
 
+
             _buildCard(
+
               titulo: "4. OBSERVAÇÃO",
               icone: Icons.edit_note_outlined,
-              conteudo: InputTextos("Detalhes extras...", controller: observacaoController, maxLines: 3),
+
+              conteudo: InputTextos(
+                "Detalhes extras...",
+                controller: observacaoController,
+                maxLines: 3,
+              ),
             ),
 
             const SizedBox(height: 25),
 
-            Buttons("SALVAR NO DOCE CONTROL", onPressed: salvar),
+
+            SizedBox(
+
+              width: double.infinity,
+              height: 58,
+
+              child: ElevatedButton.icon(
+
+                onPressed: salvar,
+
+                icon: carregando
+
+                    ? const SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+
+                    : const Icon(
+                  Icons.check_circle_outline,
+                ),
+
+                label: Text(
+
+                  carregando
+                      ? "SALVANDO..."
+                      : "SALVAR NO DOCE CONTROL",
+
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    letterSpacing: 1,
+                  ),
+                ),
+
+                style: ElevatedButton.styleFrom(
+
+                  backgroundColor: doceRosa,
+                  foregroundColor: Colors.white,
+
+                  elevation: 8,
+
+                  shadowColor:
+                  doceRosa.withOpacity(0.4),
+
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                    BorderRadius.circular(18),
+                  ),
+                ),
+              ),
+            ),
+
             const SizedBox(height: 40),
           ],
         ),
@@ -273,37 +584,136 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
     );
   }
 
-  Widget _buildCard({required String titulo, required IconData icone, required Widget conteudo}) {
+
+
+  Widget _buildCard({
+    required String titulo,
+    required IconData icone,
+    required Widget conteudo,
+  }) {
+
     return Container(
-      padding: const EdgeInsets.all(20),
+
+      padding: const EdgeInsets.all(22),
+
       decoration: BoxDecoration(
+
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4))],
+
+        borderRadius: BorderRadius.circular(24),
+
+        boxShadow: [
+
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 18,
+            spreadRadius: 1,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
+
       child: Column(
+
         crossAxisAlignment: CrossAxisAlignment.start,
+
         children: [
+
           Row(
+
             children: [
-              Icon(icone, size: 20, color: doceRoxo),
-              const SizedBox(width: 10),
-              Text(titulo, style: TextStyle(fontWeight: FontWeight.bold, color: doceRoxo, fontSize: 13)),
+
+              Container(
+
+                padding: const EdgeInsets.all(10),
+
+                decoration: BoxDecoration(
+                  color: doceRoxo.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+
+                child: Icon(
+                  icone,
+                  size: 22,
+                  color: doceRoxo,
+                ),
+              ),
+
+              const SizedBox(width: 14),
+
+              Text(
+
+                titulo,
+
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: doceRoxo,
+                  fontSize: 15,
+                  letterSpacing: 1,
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 20),
+
+          const SizedBox(height: 22),
+
           conteudo,
         ],
       ),
     );
   }
 
-  Widget _resumoFinanceiro(String label, double valor, Color cor) {
-    return Column(
-      children: [
-        Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.w600)),
-        Text("R\$ ${valor.toStringAsFixed(2)}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: cor)),
-      ],
+
+  Widget _resumoFinanceiro(
+      String label,
+      double valor,
+      Color cor,
+      ) {
+
+    return Container(
+
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 14,
+      ),
+
+      decoration: BoxDecoration(
+
+        color: cor.withOpacity(0.08),
+
+        borderRadius: BorderRadius.circular(18),
+      ),
+
+      child: Column(
+
+        children: [
+
+          Text(
+
+            label,
+
+            style: const TextStyle(
+              fontSize: 11,
+              color: Colors.grey,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1,
+            ),
+          ),
+
+          const SizedBox(height: 6),
+
+          Text(
+
+            "R\$ ${valor.toStringAsFixed(2)}",
+
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: cor,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

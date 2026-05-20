@@ -15,7 +15,9 @@ class HomeScreen extends StatelessWidget {
     required Widget tela,
     required Color cor,
   }) {
+
     return GestureDetector(
+
       onTap: () {
         Navigator.push(
           context,
@@ -24,24 +26,28 @@ class HomeScreen extends StatelessWidget {
       },
 
       child: Container(
+
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(28),
+
+          borderRadius: BorderRadius.circular(22),
+
           boxShadow: [
             BoxShadow(
               color: Colors.black12,
-              blurRadius: 10,
-              offset: Offset(0, 4),
+              blurRadius: 6,
+              offset: Offset(0, 3),
             ),
           ],
         ),
 
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+
           children: [
 
             Container(
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.all(10),
 
               decoration: BoxDecoration(
                 color: cor.withOpacity(0.15),
@@ -51,16 +57,18 @@ class HomeScreen extends StatelessWidget {
               child: Icon(
                 icone,
                 color: cor,
-                size: 34,
+                size: 24,
               ),
             ),
 
-            SizedBox(height: 18),
+            SizedBox(height: 10),
 
             Text(
               titulo,
+              textAlign: TextAlign.center,
+
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -76,19 +84,23 @@ class HomeScreen extends StatelessWidget {
     required String valor,
     required Color cor,
   }) {
+
     return Expanded(
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 6),
 
-        padding: EdgeInsets.symmetric(vertical: 18),
+        margin: EdgeInsets.symmetric(horizontal: 4),
+
+        padding: EdgeInsets.symmetric(vertical: 12),
 
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
+
+          borderRadius: BorderRadius.circular(18),
+
           boxShadow: [
             BoxShadow(
               color: Colors.black12,
-              blurRadius: 8,
+              blurRadius: 5,
             ),
           ],
         ),
@@ -99,26 +111,28 @@ class HomeScreen extends StatelessWidget {
             Icon(
               icon,
               color: cor,
-              size: 28,
+              size: 20,
             ),
 
-            SizedBox(height: 10),
+            SizedBox(height: 6),
 
             Text(
               valor,
+
               style: TextStyle(
-                fontSize: 26,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
 
-            SizedBox(height: 5),
+            SizedBox(height: 2),
 
             Text(
               titulo,
+
               style: TextStyle(
                 color: Colors.grey[700],
-                fontSize: 16,
+                fontSize: 13,
               ),
             ),
           ],
@@ -135,13 +149,17 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: Color(0xfff8f5f9),
 
       body: SafeArea(
-        child: ListView(
+
+        child: Column(
           children: [
 
+            // TOPO
             Container(
-              padding: EdgeInsets.fromLTRB(20, 20, 20, 30),
+
+              padding: EdgeInsets.fromLTRB(18, 12, 18, 16),
 
               decoration: BoxDecoration(
+
                 gradient: LinearGradient(
                   colors: [
                     Color(0xfff72585),
@@ -150,31 +168,32 @@ class HomeScreen extends StatelessWidget {
                 ),
 
                 borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(40),
-                  bottomRight: Radius.circular(40),
+                  bottomLeft: Radius.circular(35),
+                  bottomRight: Radius.circular(35),
                 ),
               ),
 
               child: Column(
                 children: [
 
-                  // LOGO MELHORADO
                   Container(
-                    padding: EdgeInsets.all(6),
+
+                    padding: EdgeInsets.all(4),
 
                     decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
+
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black26,
-                          blurRadius: 12,
+                          blurRadius: 8,
                         ),
                       ],
                     ),
 
                     child: CircleAvatar(
-                      radius: 50,
+                      radius: 34,
                       backgroundColor: Colors.white,
 
                       backgroundImage: AssetImage(
@@ -183,19 +202,20 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
 
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
 
                   Text(
                     "Controle completo da sua confeitaria",
+
                     textAlign: TextAlign.center,
 
                     style: TextStyle(
                       color: Colors.white70,
-                      fontSize: 20,
+                      fontSize: 15,
                     ),
                   ),
 
-                  SizedBox(height: 28),
+                  SizedBox(height: 14),
 
                   Row(
                     children: [
@@ -226,70 +246,74 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-            Padding(
-              padding: EdgeInsets.all(20),
+            // MENU
+            Expanded(
+              child: Padding(
 
-              child: GridView.count(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.all(14),
 
-                crossAxisCount: 2,
+                child: GridView.count(
 
-                crossAxisSpacing: 18,
-                mainAxisSpacing: 18,
+                  physics: BouncingScrollPhysics(),
 
-                childAspectRatio: 1.05,
+                  crossAxisCount: 2,
 
-                children: [
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
 
-                  itemMenu(
-                    context: context,
-                    icone: Icons.calendar_month,
-                    titulo: "Agendamentos",
-                    tela: AgendamentoScreen(),
-                    cor: Colors.orange,
-                  ),
+                  childAspectRatio: 1.28,
 
-                  itemMenu(
-                    context: context,
-                    icone: Icons.fact_check,
-                    titulo: "Pedidos",
-                    tela: ControleAgendamentoScreen(),
-                    cor: Colors.green,
-                  ),
+                  children: [
 
-                  itemMenu(
-                    context: context,
-                    icone: Icons.people,
-                    titulo: "Clientes",
-                    tela: ClienteScreen(),
-                    cor: Colors.pink,
-                  ),
+                    itemMenu(
+                      context: context,
+                      icone: Icons.calendar_month,
+                      titulo: "Agendamentos",
+                      tela: AgendamentoScreen(),
+                      cor: Colors.orange,
+                    ),
 
-                  itemMenu(
-                    context: context,
-                    icone: Icons.cake,
-                    titulo: "Decorações",
-                    tela: DecoracaoScreen(),
-                    cor: Colors.deepPurple,
-                  ),
+                    itemMenu(
+                      context: context,
+                      icone: Icons.fact_check,
+                      titulo: "Pedidos",
+                      tela: ControleAgendamentoScreen(),
+                      cor: Colors.green,
+                    ),
 
-                  itemMenu(
-                    context: context,
-                    icone: Icons.bar_chart,
-                    titulo: "Financeiro",
-                    tela: RelatorioFinanceiroScreen(),
-                    cor: Colors.indigo,
-                  ),
+                    itemMenu(
+                      context: context,
+                      icone: Icons.people,
+                      titulo: "Clientes",
+                      tela: ClienteScreen(),
+                      cor: Colors.pink,
+                    ),
 
-                  itemMenu(
-                    context: context,
-                    icone: Icons.shopping_cart,
-                    titulo: "Mercado",
-                    tela: ListaMercadoScreen(),
-                    cor: Colors.redAccent,
-                  ),
-                ],
+                    itemMenu(
+                      context: context,
+                      icone: Icons.cake,
+                      titulo: "Decorações",
+                      tela: DecoracaoScreen(),
+                      cor: Colors.deepPurple,
+                    ),
+
+                    itemMenu(
+                      context: context,
+                      icone: Icons.bar_chart,
+                      titulo: "Financeiro",
+                      tela: RelatorioFinanceiroScreen(),
+                      cor: Colors.indigo,
+                    ),
+
+                    itemMenu(
+                      context: context,
+                      icone: Icons.shopping_cart,
+                      titulo: "Mercado",
+                      tela: ListaMercadoScreen(),
+                      cor: Colors.redAccent,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
