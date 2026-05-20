@@ -9,11 +9,12 @@ import 'lista_mercado.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  Widget cardMenu({
+  Widget itemMenu({
     required BuildContext context,
     required IconData icone,
     required String titulo,
     required Widget tela,
+    required Color cor,
   }) {
     return GestureDetector(
       onTap: () {
@@ -23,43 +24,51 @@ class HomeScreen extends StatelessWidget {
         );
       },
 
-      child: Card(
-        elevation: 5,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
 
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(24),
+
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 8,
+              offset: Offset(0, 4),
+            ),
+          ],
         ),
 
-        child: Container(
-          padding: const EdgeInsets.all(20),
+        child: Padding(
+          padding: EdgeInsets.all(18),
 
-          child: Row(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+
             children: [
 
               CircleAvatar(
-                radius: 28,
-                backgroundColor: Colors.pink.shade100,
+                radius: 30,
+                backgroundColor: cor.withOpacity(0.15),
 
                 child: Icon(
                   icone,
-                  color: Colors.pink,
-                  size: 30,
+                  size: 34,
+                  color: cor,
                 ),
               ),
 
-              const SizedBox(width: 20),
+              SizedBox(height: 14),
 
-              Expanded(
-                child: Text(
-                  titulo,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+              Text(
+                titulo,
+                textAlign: TextAlign.center,
+
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-
-              const Icon(Icons.arrow_forward_ios),
             ],
           ),
         ),
@@ -72,149 +81,153 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
 
-      backgroundColor: const Color(0xFFF8F4F8),
+      backgroundColor: Color(0xfff8f3f7),
 
-      appBar: AppBar(
-        title: const Text("Doce Control"),
-        centerTitle: true,
-        backgroundColor: Colors.pink,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
+      body: SafeArea(
 
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-
-        child: ListView(
+        child: Column(
           children: [
 
-            const SizedBox(height: 10),
+            // TOPO
+            Container(
+              width: double.infinity,
 
-            Center(
-              child: Image.asset(
-                'assets/imagem/logo.jpeg',
-                height: 170,
-              ),
-            ),
+              padding: EdgeInsets.all(25),
 
-            const SizedBox(height: 20),
+              decoration: BoxDecoration(
 
-            const Text(
-              "Bem-vinda, Letícia 🍩",
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xfff72585),
+                    Color(0xffb5179e),
+                  ],
+                ),
 
-            const SizedBox(height: 8),
-
-            Text(
-              "Gerencie pedidos, clientes, entregas e pagamentos",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[700],
-              ),
-            ),
-
-            const SizedBox(height: 30),
-
-            cardMenu(
-              context: context,
-              icone: Icons.people,
-              titulo: "Clientes",
-              tela: ClienteScreen(),
-            ),
-
-            const SizedBox(height: 15),
-
-            cardMenu(
-              context: context,
-              icone: Icons.cake,
-              titulo: "Decorações",
-              tela: DecoracaoScreen(),
-            ),
-
-            const SizedBox(height: 15),
-
-            cardMenu(
-              context: context,
-              icone: Icons.calendar_month,
-              titulo: "Agendamentos",
-              tela: AgendamentoScreen(),
-            ),
-
-            const SizedBox(height: 15),
-
-            cardMenu(
-              context: context,
-              icone: Icons.fact_check,
-              titulo: "Controle de Pedidos",
-              tela: ControleAgendamentoScreen(),
-            ),
-
-            const SizedBox(height: 15),
-
-            cardMenu(
-              context: context,
-              icone: Icons.bar_chart,
-              titulo: "Relatórios",
-              tela: RelatorioFinanceiroScreen(),
-            ),
-
-            const SizedBox(height: 15),
-
-            cardMenu(
-              context: context,
-              icone: Icons.shopping_cart,
-              titulo: "Lista de Mercado",
-              tela: ListaMercadoScreen(),
-            ),
-
-            const SizedBox(height: 30),
-
-            Card(
-              color: Colors.pink.shade50,
-              elevation: 2,
-
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
+                ),
               ),
 
-              child: const Padding(
-                padding: EdgeInsets.all(18),
+              child: Column(
+                children: [
 
-                child: Column(
-                  children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
 
-                    Icon(
-                      Icons.favorite,
-                      color: Colors.pink,
-                      size: 40,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 10,
+                        ),
+                      ],
                     ),
 
-                    SizedBox(height: 10),
-
-                    Text(
-                      "Doce Control",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/imagem/logo.jpeg',
+                        height: 100,
+                        width: 100,
+                        fit: BoxFit.cover,
                       ),
                     ),
+                  ),
 
-                    SizedBox(height: 5),
+                  SizedBox(height: 16),
 
-                    Text(
-                      "Sistema de gerenciamento para confeitaria",
-                      textAlign: TextAlign.center,
+                  Text(
+                    'Doce Control',
+
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  SizedBox(height: 8),
+
+                  Text(
+                    'Controle completo da sua confeitaria',
+
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            SizedBox(height: 25),
+
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 18),
+
+                child: GridView.count(
+                  crossAxisCount: 2,
+
+                  crossAxisSpacing: 18,
+                  mainAxisSpacing: 18,
+
+                  childAspectRatio: 1,
+
+                  children: [
+
+                    itemMenu(
+                      context: context,
+                      icone: Icons.people,
+                      titulo: 'Clientes',
+                      tela: ClienteScreen(),
+                      cor: Colors.pink,
+                    ),
+
+                    itemMenu(
+                      context: context,
+                      icone: Icons.cake,
+                      titulo: 'Decorações',
+                      tela: DecoracaoScreen(),
+                      cor: Colors.deepPurple,
+                    ),
+
+                    itemMenu(
+                      context: context,
+                      icone: Icons.calendar_month,
+                      titulo: 'Agendamentos',
+                      tela: AgendamentoScreen(),
+                      cor: Colors.orange,
+                    ),
+
+                    itemMenu(
+                      context: context,
+                      icone: Icons.fact_check,
+                      titulo: 'Controle',
+                      tela: ControleAgendamentoScreen(),
+                      cor: Colors.green,
+                    ),
+
+                    itemMenu(
+                      context: context,
+                      icone: Icons.bar_chart,
+                      titulo: 'Relatórios',
+                      tela: RelatorioScreen(),
+                      cor: Colors.indigo,
+                    ),
+
+                    itemMenu(
+                      context: context,
+                      icone: Icons.shopping_cart,
+                      titulo: 'Mercado',
+                      tela: ListaMercadoScreen(),
+                      cor: Colors.redAccent,
                     ),
                   ],
                 ),
               ),
             ),
-
-            const SizedBox(height: 20),
           ],
         ),
       ),
