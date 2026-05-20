@@ -68,7 +68,6 @@ class _AgendamentoScreenState
     carregarDados();
   }
 
-  // CARREGAR DADOS
   void carregarDados() async {
 
     final c =
@@ -275,8 +274,6 @@ class _AgendamentoScreenState
       await FirebaseService()
           .salvarPedido(novoPedido);
 
-      Navigator.pop(context, true);
-
       ScaffoldMessenger.of(context)
           .showSnackBar(
 
@@ -301,6 +298,16 @@ class _AgendamentoScreenState
           ),
         ),
       );
+
+      await Future.delayed(
+        const Duration(
+          milliseconds: 800,
+        ),
+      );
+
+      if (!mounted) return;
+
+      Navigator.pop(context, true);
 
     } catch (e) {
 
@@ -333,12 +340,14 @@ class _AgendamentoScreenState
 
     } finally {
 
-      setState(() {
-        carregando = false;
-      });
+      if (mounted) {
+
+        setState(() {
+          carregando = false;
+        });
+      }
     }
   }
-
   @override
   Widget build(BuildContext context) {
 
