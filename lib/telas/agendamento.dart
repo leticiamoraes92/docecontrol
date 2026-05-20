@@ -68,6 +68,7 @@ class _AgendamentoScreenState
     carregarDados();
   }
 
+  // CARREGAR DADOS
   void carregarDados() async {
 
     final c =
@@ -83,7 +84,6 @@ class _AgendamentoScreenState
     });
   }
 
-  // CALCULAR
   void calcular() {
 
     setState(() {
@@ -118,7 +118,6 @@ class _AgendamentoScreenState
     });
   }
 
-  // DATA
   Future<void> _pickDate() async {
 
     DateTime? picked =
