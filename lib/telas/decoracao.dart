@@ -1,23 +1,37 @@
 import 'package:flutter/material.dart';
 import '../database/bancodados.dart';
 import '../widgets/widget_input.dart';
-import '../widgets/widget_button.dart';
 
 class DecoracaoScreen extends StatefulWidget {
+  const DecoracaoScreen({super.key});
+
   @override
-  _DecoracaoScreenState createState() => _DecoracaoScreenState();
+  State<DecoracaoScreen> createState() =>
+      _DecoracaoScreenState();
 }
 
-class _DecoracaoScreenState extends State<DecoracaoScreen> {
+class _DecoracaoScreenState
+    extends State<DecoracaoScreen> {
 
-  final Color doceRosa = const Color(0xFFF06292);
-  final Color doceRoxo = const Color(0xFF7E57C2);
+  final Color doceRosa =
+  const Color(0xFFF06292);
 
-  TextEditingController nomeController = TextEditingController();
-  TextEditingController valorController = TextEditingController();
+  final Color doceRoxo =
+  const Color(0xFF7E57C2);
+
+  final TextEditingController
+  nomeController =
+  TextEditingController();
+
+  final TextEditingController
+  valorController =
+  TextEditingController();
 
   List<Map<String, dynamic>> lista = [];
+
   int? idParaEditar;
+
+  bool carregando = false;
 
   @override
   void initState() {
@@ -33,135 +47,601 @@ class _DecoracaoScreenState extends State<DecoracaoScreen> {
   }
 
   void carregar() async {
-    final dados = await BancoDados.listarDecoracoes();
+
+    final dados =
+    await BancoDados.listarDecoracoes();
+
     setState(() {
       lista = dados;
     });
   }
 
   void salvar() async {
-    if (nomeController.text.isEmpty || valorController.text.isEmpty) {
-      _avisar("Preencha o nome e o valor", Colors.orange);
+
+    if (nomeController.text.isEmpty ||
+        valorController.text.isEmpty) {
+
+      _avisar(
+        "Preencha nome e valor",
+        Colors.orange,
+      );
+
       return;
     }
 
-    double valor = double.tryParse(valorController.text.replaceAll(',', '.')) ?? 0;
+    setState(() {
+      carregando = true;
+    });
 
-    if (idParaEditar == null) {
-      // Inserir novo
-      await BancoDados.inserirDecoracao(nomeController.text, valor);
-      _avisar("✨ Decoração salva com sucesso!", Colors.green);
-    } else {
+    double valor = double.tryParse(
+      valorController.text
+          .replaceAll(',', '.'),
+    ) ?? 0;
 
-      await BancoDados.atualizarDecoracao(idParaEditar!, nomeController.text, valor);
-      _avisar("Alteração salva!", Colors.blue);
+    try {
+
+      if (idParaEditar == null) {
+
+        // NOVO
+        await BancoDados.inserirDecoracao(
+          nomeController.text,
+          valor,
+        );
+
+        _avisar(
+          "Decoração salva ✨",
+          Colors.green,
+        );
+
+      } else {
+
+        await BancoDados.atualizarDecoracao(
+          idParaEditar!,
+          nomeController.text,
+          valor,
+        );
+
+        _avisar(
+          "Alteração salva!",
+          Colors.blue,
+        );
+      }
+
+      limparCampos();
+
+      carregar();
+
+    } catch (e) {
+
+      _avisar(
+        "Erro ao salvar",
+        Colors.red,
+      );
+
+    } finally {
+
+      setState(() {
+        carregando = false;
+      });
     }
-
-    limparCampos();
-    carregar();
   }
 
-  void prepararEdicao(Map<String, dynamic> d) {
+  void prepararEdicao(
+      Map<String, dynamic> d,
+      ) {
+
     setState(() {
+
       idParaEditar = d['id'];
-      nomeController.text = d['nome'];
-      valorController.text = d['valor'].toString();
+
+      nomeController.text =
+      d['nome'];
+
+      valorController.text =
+          d['valor'].toString();
     });
   }
 
   void excluir(int id) async {
 
     await BancoDados.deletarDecoracao(id);
-    _avisar("Excluído com sucesso", Colors.redAccent);
+
     carregar();
+
+    _avisar(
+      "Excluído com sucesso",
+      Colors.red,
+    );
   }
 
   void limparCampos() {
+
     setState(() {
+
       idParaEditar = null;
+
       nomeController.clear();
+
       valorController.clear();
     });
   }
 
-  void _avisar(String m, Color c) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m), backgroundColor: c));
+  void _avisar(
+      String mensagem,
+      Color cor,
+      ) {
+
+    ScaffoldMessenger.of(context)
+        .showSnackBar(
+
+      SnackBar(
+
+        behavior:
+        SnackBarBehavior.floating,
+
+        backgroundColor: cor,
+
+        shape:
+        RoundedRectangleBorder(
+          borderRadius:
+          BorderRadius.circular(14),
+        ),
+
+        content: Text(
+
+          mensagem,
+
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight:
+            FontWeight.bold,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+
+      backgroundColor:
+      const Color(0xfff8f5f9),
+
       appBar: AppBar(
-        title: Text(idParaEditar == null ? "Decorações" : "Editando Decoração"),
-        backgroundColor: doceRosa,
+
+        centerTitle: true,
+
+        title: Text(
+
+          idParaEditar == null
+              ? "Decorações"
+              : "Editar Decoração",
+
+          style: const TextStyle(
+            fontWeight:
+            FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+
+        iconTheme:
+        const IconThemeData(
+          color: Colors.white,
+        ),
+
+        flexibleSpace: Container(
+
+          decoration: BoxDecoration(
+
+            gradient: LinearGradient(
+              colors: [
+                doceRosa,
+                doceRoxo,
+              ],
+            ),
+          ),
+        ),
+
         actions: [
+
           if (idParaEditar != null)
-            IconButton(icon: Icon(Icons.close), onPressed: limparCampos)
+
+            IconButton(
+
+              icon: const Icon(
+                Icons.close,
+              ),
+
+              onPressed:
+              limparCampos,
+            ),
         ],
       ),
+
       body: Column(
+
         children: [
 
           Container(
-            padding: EdgeInsets.all(20),
+
+            width: double.infinity,
+
+            padding:
+            const EdgeInsets.fromLTRB(
+              20,
+              10,
+              20,
+              30,
+            ),
+
             decoration: BoxDecoration(
-              color: doceRosa,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
+
+              gradient: LinearGradient(
+                colors: [
+                  doceRosa,
+                  doceRoxo,
+                ],
+              ),
+
+              borderRadius:
+              const BorderRadius.only(
+                bottomLeft:
+                Radius.circular(35),
+                bottomRight:
+                Radius.circular(35),
               ),
             ),
-            child: Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    InputTextos("Nome da Decoração/Doce", controller: nomeController),
-                    SizedBox(height: 10),
-                    InputTextos(
-                      "Valor (R\$)",
-                      controller: valorController,
-                      tipo: TextInputType.numberWithOptions(decimal: true),
+
+            child: Container(
+
+              padding:
+              const EdgeInsets.all(22),
+
+              decoration: BoxDecoration(
+
+                color: Colors.white,
+
+                borderRadius:
+                BorderRadius.circular(24),
+
+                boxShadow: [
+
+                  BoxShadow(
+                    color: Colors.black
+                        .withOpacity(0.08),
+                    blurRadius: 18,
+                    offset:
+                    const Offset(0, 6),
+                  ),
+                ],
+              ),
+
+              child: Column(
+
+                children: [
+
+                  // NOME
+                  InputTextos(
+                    "Nome da Decoração",
+                    controller:
+                    nomeController,
+                  ),
+
+                  const SizedBox(
+                    height: 16,
+                  ),
+
+                  // VALOR
+                  InputTextos(
+                    "Valor (R\$)",
+                    controller:
+                    valorController,
+
+                    tipo:
+                    const TextInputType
+                        .numberWithOptions(
+                      decimal: true,
                     ),
-                    SizedBox(height: 20),
-                    Buttons(
-                      idParaEditar == null ? "SALVAR DECORAÇÃO" : "ATUALIZAR DADOS",
-                      onPressed: salvar,
+                  ),
+
+                  const SizedBox(
+                    height: 24,
+                  ),
+
+                  // BOTÃO
+                  SizedBox(
+
+                    width: double.infinity,
+                    height: 56,
+
+                    child:
+                    ElevatedButton.icon(
+
+                      onPressed:
+                      carregando
+                          ? null
+                          : salvar,
+
+                      icon: carregando
+
+                          ? const SizedBox(
+                        width: 20,
+                        height: 20,
+
+                        child:
+                        CircularProgressIndicator(
+                          strokeWidth:
+                          2,
+                          color:
+                          Colors.white,
+                        ),
+                      )
+
+                          : Icon(
+
+                        idParaEditar ==
+                            null
+
+                            ? Icons
+                            .add
+
+                            : Icons
+                            .save,
+                      ),
+
+                      label: Text(
+
+                        carregando
+
+                            ? "SALVANDO..."
+
+                            : idParaEditar ==
+                            null
+
+                            ? "SALVAR DECORAÇÃO"
+
+                            : "ATUALIZAR DADOS",
+
+                        style:
+                        const TextStyle(
+                          fontWeight:
+                          FontWeight
+                              .bold,
+
+                          fontSize: 15,
+
+                          letterSpacing:
+                          1,
+                        ),
+                      ),
+
+                      style:
+                      ElevatedButton
+                          .styleFrom(
+
+                        backgroundColor:
+                        doceRosa,
+
+                        foregroundColor:
+                        Colors.white,
+
+                        elevation: 8,
+
+                        shape:
+                        RoundedRectangleBorder(
+                          borderRadius:
+                          BorderRadius.circular(
+                            18,
+                          ),
+                        ),
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
 
-          // LISTAGEM
+          // TÍTULO
+          Padding(
+
+            padding:
+            const EdgeInsets.fromLTRB(
+              20,
+              22,
+              20,
+              12,
+            ),
+
+            child: Row(
+
+              children: [
+
+                Icon(
+                  Icons.cake_outlined,
+                  color: doceRoxo,
+                  size: 22,
+                ),
+
+                const SizedBox(width: 10),
+
+                Text(
+
+                  "DECORAÇÕES CADASTRADAS",
+
+                  style: TextStyle(
+                    fontWeight:
+                    FontWeight.bold,
+                    color: doceRoxo,
+                    fontSize: 13,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // LISTA
           Expanded(
+
             child: lista.isEmpty
-                ? Center(child: Text("Nenhuma decoração cadastrada"))
+
+                ? const Center(
+              child: Text(
+                "Nenhuma decoração cadastrada",
+              ),
+            )
+
                 : ListView.builder(
-              padding: EdgeInsets.all(16),
-              itemCount: lista.length,
-              itemBuilder: (_, i) {
+
+              padding:
+              const EdgeInsets.symmetric(
+                horizontal: 16,
+              ),
+
+              itemCount:
+              lista.length,
+
+              itemBuilder:
+                  (_, i) {
+
                 final d = lista[i];
-                return Card(
-                  margin: EdgeInsets.only(bottom: 10),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  child: ListTile(
-                    leading: Icon(Icons.cake, color: doceRoxo),
-                    title: Text(d['nome'], style: TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text("R\$ ${double.parse(d['valor'].toString()).toStringAsFixed(2)}"),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.edit, color: Colors.blue),
-                          onPressed: () => prepararEdicao(d),
+
+                return Container(
+
+                  margin:
+                  const EdgeInsets.only(
+                    bottom: 12,
+                  ),
+
+                  decoration:
+                  BoxDecoration(
+
+                    color: Colors.white,
+
+                    borderRadius:
+                    BorderRadius.circular(
+                      20,
+                    ),
+
+                    boxShadow: [
+
+                      BoxShadow(
+                        color: Colors
+                            .black
+                            .withOpacity(
+                          0.04,
                         ),
+
+                        blurRadius: 14,
+
+                        offset:
+                        const Offset(
+                          0,
+                          5,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  child: ListTile(
+
+                    contentPadding:
+                    const EdgeInsets
+                        .symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+
+                    leading:
+                    CircleAvatar(
+
+                      radius: 26,
+
+                      backgroundColor:
+                      doceRoxo
+                          .withOpacity(
+                        0.12,
+                      ),
+
+                      child: Icon(
+                        Icons
+                            .cake_outlined,
+                        color:
+                        doceRoxo,
+                      ),
+                    ),
+
+                    title: Text(
+
+                      d['nome'],
+
+                      style:
+                      const TextStyle(
+                        fontWeight:
+                        FontWeight
+                            .w600,
+                        fontSize: 16,
+                      ),
+                    ),
+
+                    subtitle: Padding(
+
+                      padding:
+                      const EdgeInsets.only(
+                        top: 4,
+                      ),
+
+                      child: Text(
+
+                        "R\$ ${double.parse(d['valor'].toString()).toStringAsFixed(2)}",
+
+                        style: TextStyle(
+                          color:
+                          Colors.grey[700],
+                        ),
+                      ),
+                    ),
+
+                    trailing: Row(
+
+                      mainAxisSize:
+                      MainAxisSize.min,
+
+                      children: [
+
                         IconButton(
-                          icon: Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _confirmarExclusao(d['id']),
+
+                          icon: Icon(
+                            Icons.edit,
+                            color:
+                            Colors.blue,
+                          ),
+
+                          onPressed:
+                              () =>
+                              prepararEdicao(
+                                d,
+                              ),
+                        ),
+
+
+                        IconButton(
+
+                          icon: const Icon(
+                            Icons
+                                .delete_outline,
+                            color:
+                            Colors.red,
+                          ),
+
+                          onPressed:
+                              () =>
+                              _confirmarExclusao(
+                                d['id'],
+                              ),
                         ),
                       ],
                     ),
@@ -175,20 +655,61 @@ class _DecoracaoScreenState extends State<DecoracaoScreen> {
     );
   }
 
-  void _confirmarExclusao(int id) {
+  // CONFIRMAR EXCLUSÃO
+  void _confirmarExclusao(
+      int id,
+      ) {
+
     showDialog(
+
       context: context,
+
       builder: (ctx) => AlertDialog(
-        title: Text("Excluir?"),
-        content: Text("Tem certeza que deseja remover esta decoração?"),
+
+        shape:
+        RoundedRectangleBorder(
+          borderRadius:
+          BorderRadius.circular(20),
+        ),
+
+        title: const Text(
+          "Excluir decoração",
+        ),
+
+        content: const Text(
+          "Deseja realmente excluir esta decoração?",
+        ),
+
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text("Cancelar")),
+
           TextButton(
+
             onPressed: () {
               Navigator.pop(ctx);
+            },
+
+            child: const Text(
+              "Cancelar",
+            ),
+          ),
+
+          TextButton(
+
+            onPressed: () {
+
+              Navigator.pop(ctx);
+
               excluir(id);
             },
-            child: Text("Excluir", style: TextStyle(color: Colors.red)),
+
+            child: const Text(
+
+              "Excluir",
+
+              style: TextStyle(
+                color: Colors.red,
+              ),
+            ),
           ),
         ],
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../database/bancodados.dart';
 import '../widgets/widget_input.dart';
 import '../models/pedido_model.dart';
@@ -9,13 +10,18 @@ class AgendamentoScreen extends StatefulWidget {
   const AgendamentoScreen({super.key});
 
   @override
-  State<AgendamentoScreen> createState() => _AgendamentoScreenState();
+  State<AgendamentoScreen> createState() =>
+      _AgendamentoScreenState();
 }
 
-class _AgendamentoScreenState extends State<AgendamentoScreen> {
+class _AgendamentoScreenState
+    extends State<AgendamentoScreen> {
 
-  final Color doceRosa = const Color(0xFFF06292);
-  final Color doceRoxo = const Color(0xFF7E57C2);
+  final Color doceRosa =
+  const Color(0xFFF06292);
+
+  final Color doceRoxo =
+  const Color(0xFF7E57C2);
 
   List clientes = [];
   List decoracoes = [];
@@ -32,15 +38,29 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
 
   String tipoEntrega = "Retirada";
 
-  final quantidadeController = TextEditingController();
-  final entradaController = TextEditingController();
-  final entregaValorController = TextEditingController(text: "0");
+  final quantidadeController =
+  TextEditingController();
 
-  final massaController = TextEditingController();
-  final dataController = TextEditingController();
-  final horarioController = TextEditingController();
-  final enderecoController = TextEditingController();
-  final observacaoController = TextEditingController();
+  final entradaController =
+  TextEditingController();
+
+  final entregaValorController =
+  TextEditingController(text: "0");
+
+  final massaController =
+  TextEditingController();
+
+  final dataController =
+  TextEditingController();
+
+  final horarioController =
+  TextEditingController();
+
+  final enderecoController =
+  TextEditingController();
+
+  final observacaoController =
+  TextEditingController();
 
   @override
   void initState() {
@@ -49,47 +69,67 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
   }
 
   void carregarDados() async {
-    final c = await BancoDados.listarClientes();
-    final d = await BancoDados.listarDecoracoes();
+
+    final c =
+    await BancoDados.listarClientes();
+
+    final d =
+    await BancoDados.listarDecoracoes();
 
     setState(() {
+
       clientes = c;
       decoracoes = d;
     });
   }
 
+  // CALCULAR
   void calcular() {
+
     setState(() {
 
       double qtd =
           double.tryParse(
-              quantidadeController.text.replaceAll(',', '.')
+              quantidadeController.text
+                  .replaceAll(',', '.')
           ) ?? 0;
 
       double entrada =
           double.tryParse(
-              entradaController.text.replaceAll(',', '.')
+              entradaController.text
+                  .replaceAll(',', '.')
           ) ?? 0;
 
       valorEntrega =
       tipoEntrega == "Entrega"
+
           ? (double.tryParse(
-          entregaValorController.text.replaceAll(',', '.')
+          entregaValorController.text
+              .replaceAll(',', '.')
       ) ?? 0)
+
           : 0;
 
-      total = (qtd * valorUnitario) + valorEntrega;
+      total =
+          (qtd * valorUnitario) +
+              valorEntrega;
 
       restante = total - entrada;
     });
   }
 
+  // DATA
   Future<void> _pickDate() async {
 
-    DateTime? picked = await showDatePicker(
+    DateTime? picked =
+    await showDatePicker(
+
       context: context,
+
       initialDate: DateTime.now(),
+
       firstDate: DateTime.now(),
+
       lastDate: DateTime(2030),
     );
 
@@ -107,15 +147,21 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
 
   Future<void> _pickTime() async {
 
-    TimeOfDay? picked = await showTimePicker(
+    TimeOfDay? picked =
+    await showTimePicker(
+
       context: context,
-      initialTime: TimeOfDay.now(),
+
+      initialTime:
+      TimeOfDay.now(),
     );
 
     if (picked != null) {
 
       setState(() {
-        horarioController.text = picked.format(context);
+
+        horarioController.text =
+            picked.format(context);
       });
     }
   }
@@ -126,14 +172,28 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
         decoracaoSelecionada == null ||
         dataController.text.isEmpty) {
 
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
 
-        const SnackBar(
-          content: Text(
-            "Preencha os campos obrigatórios!",
-            style: TextStyle(color: Colors.white),
+        SnackBar(
+
+          behavior:
+          SnackBarBehavior.floating,
+
+          backgroundColor:
+          Colors.orange,
+
+          shape:
+          RoundedRectangleBorder(
+            borderRadius:
+            BorderRadius.circular(
+              14,
+            ),
           ),
-          backgroundColor: Colors.orange,
+
+          content: const Text(
+            "Preencha os campos obrigatórios!",
+          ),
         ),
       );
 
@@ -146,50 +206,100 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
 
     try {
 
-      var clienteObj = clientes.firstWhere(
-              (c) => c['id'] == clienteSelecionado);
+      var clienteObj =
+      clientes.firstWhere(
+              (c) =>
+          c['id'] ==
+              clienteSelecionado);
 
-      var doceObj = decoracoes.firstWhere(
-              (d) => d['id'] == decoracaoSelecionada);
+      var doceObj =
+      decoracoes.firstWhere(
+              (d) =>
+          d['id'] ==
+              decoracaoSelecionada);
 
       await BancoDados.inserirPedido(
+
         clienteSelecionado!,
         decoracaoSelecionada!,
+
         observacaoController.text,
-        int.tryParse(quantidadeController.text) ?? 0,
+
+        int.tryParse(
+            quantidadeController.text
+        ) ?? 0,
+
         total,
+
         double.tryParse(
-            entradaController.text.replaceAll(',', '.')
+            entradaController.text
+                .replaceAll(',', '.')
         ) ?? 0.0,
+
         restante,
+
         massaController.text,
+
         dataController.text,
+
         horarioController.text,
+
         tipoEntrega,
+
         enderecoController.text,
+
         valorEntrega,
       );
 
-      PedidoModel novoPedido = PedidoModel(
-        cliente: clienteObj['nome'],
-        doce: doceObj['nome'],
-        quantidade: int.tryParse(quantidadeController.text) ?? 0,
+      PedidoModel novoPedido =
+      PedidoModel(
+
+        cliente:
+        clienteObj['nome'],
+
+        doce:
+        doceObj['nome'],
+
+        quantidade:
+        int.tryParse(
+            quantidadeController.text
+        ) ?? 0,
+
         total: total,
-        data: dataController.text,
+
+        data:
+        dataController.text,
+
         status: 'Pendente',
       );
 
-      await FirebaseService().salvarPedido(novoPedido);
+      await FirebaseService()
+          .salvarPedido(novoPedido);
 
       Navigator.pop(context, true);
 
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
 
-        const SnackBar(
-          content: Text(
+        SnackBar(
+
+          behavior:
+          SnackBarBehavior.floating,
+
+          backgroundColor:
+          Colors.green,
+
+          shape:
+          RoundedRectangleBorder(
+            borderRadius:
+            BorderRadius.circular(
+              14,
+            ),
+          ),
+
+          content: const Text(
             "Agendamento salvo com sucesso!",
           ),
-          backgroundColor: Colors.green,
         ),
       );
 
@@ -197,13 +307,28 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
 
       print("Erro ao salvar: $e");
 
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
 
-        const SnackBar(
-          content: Text(
+        SnackBar(
+
+          behavior:
+          SnackBarBehavior.floating,
+
+          backgroundColor:
+          Colors.red,
+
+          shape:
+          RoundedRectangleBorder(
+            borderRadius:
+            BorderRadius.circular(
+              14,
+            ),
+          ),
+
+          content: const Text(
             "Erro ao salvar pedido.",
           ),
-          backgroundColor: Colors.red,
         ),
       );
 
@@ -220,36 +345,56 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
 
     return Scaffold(
 
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor:
+      const Color(0xfff8f5f9),
 
       appBar: AppBar(
+
+        centerTitle: true,
+
         title: const Text(
+
           "Novo Agendamento",
+
           style: TextStyle(
-            fontWeight: FontWeight.bold,
+            fontWeight:
+            FontWeight.bold,
             color: Colors.white,
           ),
         ),
 
-        backgroundColor: doceRosa,
-        centerTitle: true,
-
-        iconTheme: const IconThemeData(
+        iconTheme:
+        const IconThemeData(
           color: Colors.white,
+        ),
+
+        flexibleSpace: Container(
+
+          decoration: BoxDecoration(
+
+            gradient: LinearGradient(
+              colors: [
+                doceRosa,
+                doceRoxo,
+              ],
+            ),
+          ),
         ),
       ),
 
       body: carregando
 
           ? Center(
-        child: CircularProgressIndicator(
+        child:
+        CircularProgressIndicator(
           color: doceRosa,
         ),
       )
 
           : SingleChildScrollView(
 
-        padding: const EdgeInsets.symmetric(
+        padding:
+        const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 20,
         ),
@@ -260,145 +405,295 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
 
             _buildCard(
 
-              titulo: "1. CLIENTE E DOCE",
-              icone: Icons.person_outline,
+              titulo:
+              "1. CLIENTE E DOCE",
+
+              icone:
+              Icons.person_outline,
 
               conteudo: Column(
 
                 children: [
 
-                  DropdownButtonFormField<int>(
+                  DropdownButtonFormField<
+                      int>(
 
-                    value: clienteSelecionado,
+                    value:
+                    clienteSelecionado,
 
-                    decoration: const InputDecoration(
-                      labelText: "Selecionar Cliente",
+                    decoration:
+                    _inputDecoration(
+                      "Selecionar Cliente",
                     ),
 
                     onChanged: (v) {
 
                       setState(() {
-                        clienteSelecionado = v;
+                        clienteSelecionado =
+                            v;
                       });
                     },
 
                     items: clientes
-                        .map<DropdownMenuItem<int>>(
-                          (c) => DropdownMenuItem(
-                        value: c['id'],
-                        child: Text(c['nome']),
-                      ),
+                        .map<
+                        DropdownMenuItem<
+                            int>>(
+                          (c) =>
+                          DropdownMenuItem(
+                            value:
+                            c['id'],
+
+                            child: Text(
+                              c['nome'],
+                            ),
+                          ),
                     ).toList(),
                   ),
 
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 16),
 
-                  DropdownButtonFormField<int>(
+                  DropdownButtonFormField<
+                      int>(
 
-                    value: decoracaoSelecionada,
+                    value:
+                    decoracaoSelecionada,
 
-                    decoration: const InputDecoration(
-                      labelText: "Tipo de Doce",
+                    decoration:
+                    _inputDecoration(
+                      "Tipo de Doce",
                     ),
 
                     onChanged: (v) {
 
                       setState(() {
 
-                        decoracaoSelecionada = v;
+                        decoracaoSelecionada =
+                            v;
 
-                        var d = decoracoes.firstWhere(
-                                (item) => item['id'] == v);
+                        var d =
+                        decoracoes
+                            .firstWhere(
+                                (item) =>
+                            item['id'] ==
+                                v);
 
                         valorUnitario =
                             double.tryParse(
-                                d['valor'].toString()
-                            ) ?? 0.0;
+                                d['valor']
+                                    .toString()
+                            ) ??
+                                0;
 
                         calcular();
                       });
                     },
 
                     items: decoracoes
-                        .map<DropdownMenuItem<int>>(
-                          (d) => DropdownMenuItem(
-                        value: d['id'],
-                        child: Text(d['nome']),
-                      ),
+                        .map<
+                        DropdownMenuItem<
+                            int>>(
+                          (d) =>
+                          DropdownMenuItem(
+                            value:
+                            d['id'],
+
+                            child: Text(
+                              d['nome'],
+                            ),
+                          ),
                     ).toList(),
                   ),
 
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 16),
 
                   InputTextos(
                     "Massa/Sabor",
-                    controller: massaController,
+                    controller:
+                    massaController,
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 12),
-
+            const SizedBox(height: 14),
 
             _buildCard(
 
-              titulo: "2. FINANCEIRO",
-              icone: Icons.monetization_on_outlined,
+              titulo:
+              "2. FINANCEIRO",
+
+              icone:
+              Icons.attach_money_outlined,
 
               conteudo: Column(
 
                 children: [
 
                   InputTextos(
+
                     "Quantidade",
-                    controller: quantidadeController,
-                    tipo: TextInputType.number,
-                    onChanged: (v) => calcular(),
+
+                    controller:
+                    quantidadeController,
+
+                    tipo:
+                    TextInputType.number,
+
+                    onChanged:
+                        (v) =>
+                        calcular(),
                   ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
+
+                  Container(
+
+                    width: double.infinity,
+
+                    padding:
+                    const EdgeInsets.all(
+                      14,
+                    ),
+
+                    decoration:
+                    BoxDecoration(
+
+                      color: Colors
+                          .grey
+                          .shade100,
+
+                      borderRadius:
+                      BorderRadius.circular(
+                        16,
+                      ),
+                    ),
+
+                    child: Row(
+
+                      mainAxisAlignment:
+                      MainAxisAlignment
+                          .spaceBetween,
+
+                      children: [
+
+                        const Text(
+
+                          "Valor Unitário",
+
+                          style: TextStyle(
+                            fontWeight:
+                            FontWeight
+                                .w600,
+                          ),
+                        ),
+
+                        Text(
+
+                          "R\$ ${valorUnitario.toStringAsFixed(2)}",
+
+                          style: TextStyle(
+                            fontWeight:
+                            FontWeight
+                                .bold,
+                            color:
+                            doceRosa,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 14),
 
                   InputTextos(
+
                     "Entrada (R\$)",
-                    controller: entradaController,
-                    tipo: TextInputType.number,
-                    onChanged: (v) => calcular(),
+
+                    controller:
+                    entradaController,
+
+                    tipo:
+                    TextInputType.number,
+
+                    onChanged:
+                        (v) =>
+                        calcular(),
                   ),
 
-                  const SizedBox(height: 20),
+                  Align(
+
+                    alignment:
+                    Alignment.centerRight,
+
+                    child: TextButton(
+
+                      onPressed: () {
+
+                        setState(() {
+
+                          entradaController
+                              .text =
+                              (total / 2)
+                                  .toStringAsFixed(
+                                2,
+                              );
+
+                          calcular();
+                        });
+                      },
+
+                      child: Text(
+
+                        "Usar entrada de 50%",
+
+                        style: TextStyle(
+                          color:
+                          doceRoxo,
+                          fontWeight:
+                          FontWeight
+                              .bold,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
 
                   Row(
 
                     mainAxisAlignment:
-                    MainAxisAlignment.spaceAround,
+                    MainAxisAlignment
+                        .spaceAround,
 
                     children: [
 
                       _resumoFinanceiro(
-                        "TOTAL",
+                        "VALOR TOTAL",
                         total,
                         Colors.black,
                       ),
 
                       _resumoFinanceiro(
-                        "FALTA",
+                        "SALDO",
                         restante,
                         doceRosa,
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 12),
-
+            const SizedBox(height: 14),
 
             _buildCard(
 
-              titulo: "3. DATA E ENTREGA",
-              icone: Icons.calendar_month_outlined,
+              titulo:
+              "3. DATA E ENTREGA",
+
+              icone:
+              Icons.local_shipping_outlined,
 
               conteudo: Column(
 
@@ -412,13 +707,17 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
 
                         child: InkWell(
 
-                          onTap: _pickDate,
+                          onTap:
+                          _pickDate,
 
-                          child: AbsorbPointer(
+                          child:
+                          AbsorbPointer(
 
-                            child: InputTextos(
+                            child:
+                            InputTextos(
                               "Data",
-                              controller: dataController,
+                              controller:
+                              dataController,
                             ),
                           ),
                         ),
@@ -430,13 +729,17 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
 
                         child: InkWell(
 
-                          onTap: _pickTime,
+                          onTap:
+                          _pickTime,
 
-                          child: AbsorbPointer(
+                          child:
+                          AbsorbPointer(
 
-                            child: InputTextos(
+                            child:
+                            InputTextos(
                               "Hora",
-                              controller: horarioController,
+                              controller:
+                              horarioController,
                             ),
                           ),
                         ),
@@ -444,14 +747,17 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
                     ],
                   ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
 
-                  DropdownButtonFormField<String>(
+                  DropdownButtonFormField<
+                      String>(
 
-                    value: tipoEntrega,
+                    value:
+                    tipoEntrega,
 
-                    decoration: const InputDecoration(
-                      labelText: "Tipo de Entrega",
+                    decoration:
+                    _inputDecoration(
+                      "Tipo de Entrega",
                     ),
 
                     onChanged: (v) {
@@ -460,8 +766,11 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
 
                         tipoEntrega = v!;
 
-                        if (tipoEntrega == "Retirada") {
-                          entregaValorController.text = "0";
+                        if (tipoEntrega ==
+                            "Retirada") {
+
+                          entregaValorController
+                              .text = "0";
                         }
 
                         calcular();
@@ -471,107 +780,161 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
                     items: const [
 
                       DropdownMenuItem(
-                        value: "Retirada",
-                        child: Text("Retirada"),
+                        value:
+                        "Retirada",
+
+                        child: Text(
+                          "Retirada",
+                        ),
                       ),
 
                       DropdownMenuItem(
-                        value: "Entrega",
-                        child: Text("Entrega"),
+                        value:
+                        "Entrega",
+
+                        child: Text(
+                          "Entrega",
+                        ),
                       ),
                     ],
                   ),
 
-                  if (tipoEntrega == "Entrega") ...[
+                  if (tipoEntrega ==
+                      "Entrega") ...[
 
-                    const SizedBox(height: 12),
-
-                    InputTextos(
-                      "Valor da Entrega (R\$)",
-                      controller: entregaValorController,
-                      tipo: TextInputType.number,
-                      onChanged: (v) => calcular(),
+                    const SizedBox(
+                      height: 16,
                     ),
 
-                    const SizedBox(height: 12),
+                    InputTextos(
+
+                      "Valor da Entrega",
+
+                      controller:
+                      entregaValorController,
+
+                      tipo:
+                      TextInputType.number,
+
+                      onChanged:
+                          (v) =>
+                          calcular(),
+                    ),
+
+                    const SizedBox(
+                      height: 16,
+                    ),
 
                     InputTextos(
                       "Endereço Completo",
-                      controller: enderecoController,
+                      controller:
+                      enderecoController,
                     ),
                   ],
                 ],
               ),
             ),
 
-            const SizedBox(height: 12),
-
+            const SizedBox(height: 14),
 
             _buildCard(
 
-              titulo: "4. OBSERVAÇÃO",
-              icone: Icons.edit_note_outlined,
+              titulo:
+              "4. OBSERVAÇÕES",
+
+              icone:
+              Icons.edit_note_outlined,
 
               conteudo: InputTextos(
+
                 "Detalhes extras...",
-                controller: observacaoController,
-                maxLines: 3,
+
+                controller:
+                observacaoController,
+
+                maxLines: 4,
               ),
             ),
 
-            const SizedBox(height: 25),
-
+            const SizedBox(height: 28),
 
             SizedBox(
 
               width: double.infinity,
               height: 58,
 
-              child: ElevatedButton.icon(
+              child:
+              ElevatedButton.icon(
 
-                onPressed: salvar,
+                onPressed:
+                carregando
+                    ? null
+                    : salvar,
 
                 icon: carregando
 
                     ? const SizedBox(
+
                   width: 22,
                   height: 22,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
+
+                  child:
+                  CircularProgressIndicator(
+                    strokeWidth:
+                    2,
+                    color:
+                    Colors.white,
                   ),
                 )
 
                     : const Icon(
-                  Icons.check_circle_outline,
+                  Icons
+                      .check_circle_outline,
                 ),
 
                 label: Text(
 
                   carregando
+
                       ? "SALVANDO..."
+
                       : "SALVAR NO DOCE CONTROL",
 
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
+                  style:
+                  const TextStyle(
+                    fontWeight:
+                    FontWeight
+                        .bold,
                     fontSize: 16,
-                    letterSpacing: 1,
+                    letterSpacing:
+                    1,
                   ),
                 ),
 
-                style: ElevatedButton.styleFrom(
+                style:
+                ElevatedButton
+                    .styleFrom(
 
-                  backgroundColor: doceRosa,
-                  foregroundColor: Colors.white,
+                  backgroundColor:
+                  doceRosa,
+
+                  foregroundColor:
+                  Colors.white,
 
                   elevation: 8,
 
                   shadowColor:
-                  doceRosa.withOpacity(0.4),
+                  doceRosa
+                      .withOpacity(
+                    0.4,
+                  ),
 
-                  shape: RoundedRectangleBorder(
+                  shape:
+                  RoundedRectangleBorder(
                     borderRadius:
-                    BorderRadius.circular(18),
+                    BorderRadius.circular(
+                      18,
+                    ),
                   ),
                 ),
               ),
@@ -584,9 +947,9 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
     );
   }
 
-
-
+  // CARD
   Widget _buildCard({
+
     required String titulo,
     required IconData icone,
     required Widget conteudo,
@@ -594,28 +957,35 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
 
     return Container(
 
-      padding: const EdgeInsets.all(22),
+      padding:
+      const EdgeInsets.all(22),
 
       decoration: BoxDecoration(
 
         color: Colors.white,
 
-        borderRadius: BorderRadius.circular(24),
+        borderRadius:
+        BorderRadius.circular(24),
 
         boxShadow: [
 
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color:
+            Colors.black.withOpacity(
+              0.05,
+            ),
             blurRadius: 18,
             spreadRadius: 1,
-            offset: const Offset(0, 6),
+            offset:
+            const Offset(0, 6),
           ),
         ],
       ),
 
       child: Column(
 
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment:
+        CrossAxisAlignment.start,
 
         children: [
 
@@ -625,17 +995,30 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
 
               Container(
 
-                padding: const EdgeInsets.all(10),
+                padding:
+                const EdgeInsets.all(
+                  10,
+                ),
 
-                decoration: BoxDecoration(
-                  color: doceRoxo.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(14),
+                decoration:
+                BoxDecoration(
+
+                  color: doceRoxo
+                      .withOpacity(
+                    0.1,
+                  ),
+
+                  borderRadius:
+                  BorderRadius.circular(
+                    14,
+                  ),
                 ),
 
                 child: Icon(
                   icone,
                   size: 22,
-                  color: doceRoxo,
+                  color:
+                  doceRoxo,
                 ),
               ),
 
@@ -646,8 +1029,10 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
                 titulo,
 
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: doceRoxo,
+                  fontWeight:
+                  FontWeight.bold,
+                  color:
+                  doceRoxo,
                   fontSize: 15,
                   letterSpacing: 1,
                 ),
@@ -663,6 +1048,32 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
     );
   }
 
+  InputDecoration _inputDecoration(
+      String label,
+      ) {
+
+    return InputDecoration(
+
+      labelText: label,
+
+      filled: true,
+
+      fillColor:
+      Colors.grey.shade50,
+
+      border:
+      OutlineInputBorder(
+
+        borderRadius:
+        BorderRadius.circular(
+          16,
+        ),
+
+        borderSide:
+        BorderSide.none,
+      ),
+    );
+  }
 
   Widget _resumoFinanceiro(
       String label,
@@ -672,16 +1083,19 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
 
     return Container(
 
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
+      padding:
+      const EdgeInsets.symmetric(
+        horizontal: 18,
         vertical: 14,
       ),
 
       decoration: BoxDecoration(
 
-        color: cor.withOpacity(0.08),
+        color:
+        cor.withOpacity(0.08),
 
-        borderRadius: BorderRadius.circular(18),
+        borderRadius:
+        BorderRadius.circular(18),
       ),
 
       child: Column(
@@ -695,7 +1109,8 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
             style: const TextStyle(
               fontSize: 11,
               color: Colors.grey,
-              fontWeight: FontWeight.w600,
+              fontWeight:
+              FontWeight.w600,
               letterSpacing: 1,
             ),
           ),
@@ -708,7 +1123,8 @@ class _AgendamentoScreenState extends State<AgendamentoScreen> {
 
             style: TextStyle(
               fontSize: 22,
-              fontWeight: FontWeight.bold,
+              fontWeight:
+              FontWeight.bold,
               color: cor,
             ),
           ),

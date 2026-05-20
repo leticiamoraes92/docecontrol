@@ -6,7 +6,7 @@ class ControleAgendamentoScreen extends StatefulWidget {
   const ControleAgendamentoScreen({super.key});
 
   @override
-  _ControleAgendamentoScreenState createState() =>
+  State<ControleAgendamentoScreen> createState() =>
       _ControleAgendamentoScreenState();
 }
 
@@ -21,7 +21,8 @@ class _ControleAgendamentoScreenState
 
   String _filtroAtual = 'todos';
 
-  int _mesSelecionado = DateTime.now().month;
+  int _mesSelecionado =
+      DateTime.now().month;
 
   @override
   void initState() {
@@ -31,7 +32,8 @@ class _ControleAgendamentoScreenState
 
   void _atualizarLista() async {
 
-    final dados = await BancoDados.listarPedidos();
+    final dados =
+    await BancoDados.listarPedidos();
 
     setState(() {
 
@@ -49,66 +51,73 @@ class _ControleAgendamentoScreenState
 
       DateTime agora = DateTime.now();
 
-      _pedidosFiltrados = _todosPedidos.where((p) {
+      _pedidosFiltrados =
+          _todosPedidos.where((p) {
 
-        try {
+            try {
 
-          List<String> partes =
-          p['data'].split('/');
+              List<String> partes =
+              p['data'].split('/');
 
-          DateTime dataPedido = DateTime(
-            int.parse(partes[2]),
-            int.parse(partes[1]),
-            int.parse(partes[0]),
-          );
+              DateTime dataPedido =
+              DateTime(
+                int.parse(partes[2]),
+                int.parse(partes[1]),
+                int.parse(partes[0]),
+              );
 
-          if (filtro == 'hoje') {
+              if (filtro == 'hoje') {
 
-            return dataPedido.day == agora.day &&
-                dataPedido.month == agora.month &&
-                dataPedido.year == agora.year;
-          }
+                return dataPedido.day ==
+                    agora.day &&
+                    dataPedido.month ==
+                        agora.month &&
+                    dataPedido.year ==
+                        agora.year;
+              }
 
-          else if (filtro == 'semanal') {
+              else if (filtro == 'semanal') {
 
-            final inicioSemana =
-            agora.subtract(
-              Duration(days: agora.weekday - 1),
-            );
-
-            final fimSemana =
-            inicioSemana.add(
-              const Duration(days: 6),
-            );
-
-            return dataPedido.isAfter(
-              inicioSemana.subtract(
-                const Duration(days: 1),
-              ),
-            ) &&
-                dataPedido.isBefore(
-                  fimSemana.add(
-                    const Duration(days: 1),
+                final inicioSemana =
+                agora.subtract(
+                  Duration(
+                    days: agora.weekday - 1,
                   ),
                 );
-          }
 
+                final fimSemana =
+                inicioSemana.add(
+                  const Duration(days: 6),
+                );
 
-          else if (filtro == 'mensal') {
+                return dataPedido.isAfter(
+                  inicioSemana.subtract(
+                    const Duration(days: 1),
+                  ),
+                ) &&
+                    dataPedido.isBefore(
+                      fimSemana.add(
+                        const Duration(days: 1),
+                      ),
+                    );
+              }
 
-            return dataPedido.month ==
-                _mesSelecionado &&
-                dataPedido.year == agora.year;
-          }
+              else if (filtro == 'mensal') {
 
-        } catch (e) {
+                return dataPedido.month ==
+                    _mesSelecionado &&
+                    dataPedido.year ==
+                        agora.year;
+              }
 
-          return true;
-        }
+            } catch (e) {
 
-        return true;
+              return true;
+            }
 
-      }).toList();
+            return true;
+
+          }).toList();
     });
   }
 
@@ -136,20 +145,25 @@ class _ControleAgendamentoScreenState
 
     return Container(
 
-      padding: const EdgeInsets.symmetric(
+      padding:
+      const EdgeInsets.symmetric(
         horizontal: 12,
         vertical: 5,
       ),
 
       decoration: BoxDecoration(
-        color: cor,
-        borderRadius: BorderRadius.circular(12),
+        color: cor.withOpacity(0.15),
+
+        borderRadius:
+        BorderRadius.circular(12),
       ),
 
       child: Text(
+
         status,
-        style: const TextStyle(
-          color: Colors.white,
+
+        style: TextStyle(
+          color: cor,
           fontSize: 11,
           fontWeight: FontWeight.bold,
         ),
@@ -157,6 +171,7 @@ class _ControleAgendamentoScreenState
     );
   }
 
+  // LINHA INFO
   Widget _linhaInfo(
       String label,
       String valor,
@@ -164,7 +179,8 @@ class _ControleAgendamentoScreenState
 
     return Padding(
 
-      padding: const EdgeInsets.symmetric(
+      padding:
+      const EdgeInsets.symmetric(
         vertical: 3,
       ),
 
@@ -195,6 +211,7 @@ class _ControleAgendamentoScreenState
     );
   }
 
+  // CARD PEDIDO
   Widget _cardPedido(Map p) {
 
     bool isConcluido =
@@ -202,36 +219,61 @@ class _ControleAgendamentoScreenState
 
     return Opacity(
 
-      opacity: isConcluido ? 0.75 : 1,
+      opacity:
+      isConcluido ? 0.75 : 1,
 
-      child: Card(
+      child: Container(
 
-        elevation: 6,
-
-        shadowColor:
-        doceRosa.withOpacity(0.2),
-
-        margin: const EdgeInsets.only(
+        margin:
+        const EdgeInsets.only(
           bottom: 14,
         ),
 
-        shape: RoundedRectangleBorder(
+        decoration: BoxDecoration(
+
+          color: Colors.white,
+
           borderRadius:
-          BorderRadius.circular(18),
+          BorderRadius.circular(22),
+
+          boxShadow: [
+
+            BoxShadow(
+              color: Colors.black
+                  .withOpacity(0.06),
+              blurRadius: 18,
+              offset: const Offset(0, 6),
+            ),
+          ],
         ),
 
         child: ExpansionTile(
+
+          collapsedShape:
+          RoundedRectangleBorder(
+            borderRadius:
+            BorderRadius.circular(22),
+          ),
+
+          shape:
+          RoundedRectangleBorder(
+            borderRadius:
+            BorderRadius.circular(22),
+          ),
 
           leading: CircleAvatar(
 
             backgroundColor:
             isConcluido
-                ? Colors.green[100]
+                ? Colors.green
+                .withOpacity(0.15)
                 : doceRosa.withOpacity(0.15),
 
             child: Icon(
-              Icons.cake,
-              color: isConcluido
+              Icons.cake_outlined,
+
+              color:
+              isConcluido
                   ? Colors.green
                   : doceRosa,
             ),
@@ -240,15 +282,16 @@ class _ControleAgendamentoScreenState
           title: Row(
 
             mainAxisAlignment:
-            MainAxisAlignment.spaceBetween,
+            MainAxisAlignment
+                .spaceBetween,
 
             children: [
 
               Expanded(
                 child: Text(
 
-                  p['nome_cliente'] ??
-                      "Cliente",
+                  p['nome_cliente']
+                      ?? "Cliente",
 
                   style: const TextStyle(
                     fontWeight:
@@ -258,7 +301,8 @@ class _ControleAgendamentoScreenState
               ),
 
               _badgeStatus(
-                p['status'] ?? "PENDENTE",
+                p['status']
+                    ?? "PENDENTE",
               ),
             ],
           ),
@@ -271,12 +315,14 @@ class _ControleAgendamentoScreenState
 
             Padding(
 
-              padding: const EdgeInsets.all(16),
+              padding:
+              const EdgeInsets.all(16),
 
               child: Column(
 
                 crossAxisAlignment:
-                CrossAxisAlignment.start,
+                CrossAxisAlignment
+                    .start,
 
                 children: [
 
@@ -285,8 +331,8 @@ class _ControleAgendamentoScreenState
                   // PRODUTO
                   _linhaInfo(
                     "Doce:",
-                    p['nome_doce'] ??
-                        "Não informado",
+                    p['nome_doce']
+                        ?? "Não informado",
                   ),
 
                   _linhaInfo(
@@ -299,21 +345,23 @@ class _ControleAgendamentoScreenState
                   // ENTREGA
                   _linhaInfo(
                     "Entrega:",
-                    p['tipo_entrega'] ?? "-",
+                    p['tipo_entrega']
+                        ?? "-",
                   ),
 
-                  if (p['tipo_entrega'] ==
-                      "Entrega")
+                  if (p['tipo_entrega']
+                      == "Entrega")
 
                     _linhaInfo(
                       "Endereço:",
-                      p['endereco'] ?? "-",
+                      p['endereco']
+                          ?? "-",
                     ),
 
                   _linhaInfo(
                     "Obs:",
-                    p['observacao'] ??
-                        "Nenhuma",
+                    p['observacao']
+                        ?? "Nenhuma",
                   ),
 
                   const Divider(),
@@ -337,27 +385,27 @@ class _ControleAgendamentoScreenState
 
                     child: Text(
 
-                      "Total: R\$ ${p['total']?.toStringAsFixed(2) ?? '0.00'}",
+                      "R\$ ${p['total']?.toStringAsFixed(2) ?? '0.00'}",
 
                       style: const TextStyle(
                         fontWeight:
                         FontWeight.bold,
-                        fontSize: 20,
+                        fontSize: 24,
                         color: Colors.green,
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
 
                   Row(
 
                     mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
+                    MainAxisAlignment
+                        .spaceBetween,
 
                     children: [
 
-                      // EDITAR
                       TextButton.icon(
 
                         icon: Icon(
@@ -367,6 +415,7 @@ class _ControleAgendamentoScreenState
                         ),
 
                         label: Text(
+
                           "EDITAR",
 
                           style: TextStyle(
@@ -376,7 +425,8 @@ class _ControleAgendamentoScreenState
                           ),
                         ),
 
-                        onPressed: () async {
+                        onPressed:
+                            () async {
 
                           bool? mudou =
                           await Navigator.push(
@@ -385,7 +435,8 @@ class _ControleAgendamentoScreenState
 
                             MaterialPageRoute(
 
-                              builder: (context) =>
+                              builder:
+                                  (context) =>
                                   EditarAgendamentoScreen(
                                     pedido: p,
                                   ),
@@ -401,12 +452,13 @@ class _ControleAgendamentoScreenState
                       TextButton.icon(
 
                         icon: const Icon(
-                          Icons.delete,
+                          Icons.delete_outline,
                           color: Colors.red,
                           size: 18,
                         ),
 
                         label: const Text(
+
                           "EXCLUIR",
 
                           style: TextStyle(
@@ -425,11 +477,13 @@ class _ControleAgendamentoScreenState
                             builder: (_) =>
                                 AlertDialog(
 
-                                  title: const Text(
+                                  title:
+                                  const Text(
                                     "Excluir Pedido",
                                   ),
 
-                                  content: const Text(
+                                  content:
+                                  const Text(
                                     "Deseja realmente excluir este pedido?",
                                   ),
 
@@ -443,14 +497,16 @@ class _ControleAgendamentoScreenState
                                         );
                                       },
 
-                                      child: const Text(
+                                      child:
+                                      const Text(
                                         "Cancelar",
                                       ),
                                     ),
 
                                     TextButton(
 
-                                      onPressed: () async {
+                                      onPressed:
+                                          () async {
 
                                         await BancoDados
                                             .excluirPedido(
@@ -467,15 +523,30 @@ class _ControleAgendamentoScreenState
                                           context,
                                         ).showSnackBar(
 
-                                          const SnackBar(
-                                            content: Text(
+                                          SnackBar(
+
+                                            behavior:
+                                            SnackBarBehavior.floating,
+
+                                            backgroundColor:
+                                            Colors.red,
+
+                                            shape:
+                                            RoundedRectangleBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(14),
+                                            ),
+
+                                            content:
+                                            const Text(
                                               "Pedido excluído!",
                                             ),
                                           ),
                                         );
                                       },
 
-                                      child: const Text(
+                                      child:
+                                      const Text(
                                         "Excluir",
                                       ),
                                     ),
@@ -487,6 +558,7 @@ class _ControleAgendamentoScreenState
                     ],
                   ),
 
+                  // FINALIZAR
                   if (!isConcluido) ...[
 
                     const SizedBox(height: 14),
@@ -504,8 +576,22 @@ class _ControleAgendamentoScreenState
 
                         style:
                         ElevatedButton.styleFrom(
+
                           backgroundColor:
-                          Colors.green,
+                          Colors.green.shade600,
+
+                          elevation: 4,
+
+                          padding:
+                          const EdgeInsets.symmetric(
+                            vertical: 14,
+                          ),
+
+                          shape:
+                          RoundedRectangleBorder(
+                            borderRadius:
+                            BorderRadius.circular(14),
+                          ),
                         ),
 
                         onPressed: () {
@@ -517,12 +603,14 @@ class _ControleAgendamentoScreenState
                             builder: (_) =>
                                 AlertDialog(
 
-                                  title: const Text(
+                                  title:
+                                  const Text(
                                     "Finalizar Pedido",
                                   ),
 
-                                  content: const Text(
-                                    "Deseja marcar este pedido como concluído?",
+                                  content:
+                                  const Text(
+                                    "Deseja concluir este pedido?",
                                   ),
 
                                   actions: [
@@ -535,14 +623,16 @@ class _ControleAgendamentoScreenState
                                         );
                                       },
 
-                                      child: const Text(
+                                      child:
+                                      const Text(
                                         "Cancelar",
                                       ),
                                     ),
 
                                     TextButton(
 
-                                      onPressed: () async {
+                                      onPressed:
+                                          () async {
 
                                         await BancoDados
                                             .atualizarStatusPedido(
@@ -560,15 +650,30 @@ class _ControleAgendamentoScreenState
                                           context,
                                         ).showSnackBar(
 
-                                          const SnackBar(
-                                            content: Text(
+                                          SnackBar(
+
+                                            behavior:
+                                            SnackBarBehavior.floating,
+
+                                            backgroundColor:
+                                            Colors.green,
+
+                                            shape:
+                                            RoundedRectangleBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(14),
+                                            ),
+
+                                            content:
+                                            const Text(
                                               "Pedido finalizado!",
                                             ),
                                           ),
                                         );
                                       },
 
-                                      child: const Text(
+                                      child:
+                                      const Text(
                                         "Confirmar",
                                       ),
                                     ),
@@ -599,11 +704,13 @@ class _ControleAgendamentoScreenState
     );
   }
 
+  // FILTROS
   Widget _sessaoFiltros() {
 
     return Container(
 
-      padding: const EdgeInsets.symmetric(
+      padding:
+      const EdgeInsets.symmetric(
         vertical: 10,
       ),
 
@@ -611,7 +718,8 @@ class _ControleAgendamentoScreenState
 
       child: SingleChildScrollView(
 
-        scrollDirection: Axis.horizontal,
+        scrollDirection:
+        Axis.horizontal,
 
         child: Row(
 
@@ -654,11 +762,18 @@ class _ControleAgendamentoScreenState
 
     return Padding(
 
-      padding: const EdgeInsets.symmetric(
+      padding:
+      const EdgeInsets.symmetric(
         horizontal: 4,
       ),
 
       child: ChoiceChip(
+
+        elevation: 2,
+        pressElevation: 4,
+
+        shape:
+        const StadiumBorder(),
 
         label: Text(label),
 
@@ -702,7 +817,8 @@ class _ControleAgendamentoScreenState
 
     return Container(
 
-      padding: const EdgeInsets.symmetric(
+      padding:
+      const EdgeInsets.symmetric(
         horizontal: 20,
         vertical: 5,
       ),
@@ -746,9 +862,12 @@ class _ControleAgendamentoScreenState
 
           setState(() {
 
-            _mesSelecionado = novoMes!;
+            _mesSelecionado =
+            novoMes!;
 
-            _aplicarFiltro('mensal');
+            _aplicarFiltro(
+              'mensal',
+            );
           });
         },
       ),
@@ -766,19 +885,34 @@ class _ControleAgendamentoScreenState
       appBar: AppBar(
 
         title: const Text(
+
           "Controle Doce",
+
           style: TextStyle(
-            fontWeight: FontWeight.bold,
+            fontWeight:
+            FontWeight.bold,
             color: Colors.white,
           ),
         ),
 
-        backgroundColor: doceRosa,
-
         centerTitle: true,
 
-        iconTheme: const IconThemeData(
+        iconTheme:
+        const IconThemeData(
           color: Colors.white,
+        ),
+
+        flexibleSpace: Container(
+
+          decoration: BoxDecoration(
+
+            gradient: LinearGradient(
+              colors: [
+                doceRosa,
+                doceRoxo,
+              ],
+            ),
+          ),
         ),
       ),
 
@@ -793,7 +927,8 @@ class _ControleAgendamentoScreenState
 
           Expanded(
 
-            child: _pedidosFiltrados.isEmpty
+            child:
+            _pedidosFiltrados.isEmpty
 
                 ? const Center(
               child: Text(
