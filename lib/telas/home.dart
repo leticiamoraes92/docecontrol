@@ -213,7 +213,7 @@ class HomeScreen extends StatelessWidget {
                       context: context,
                       icone: Icons.bar_chart,
                       titulo: 'Relatórios',
-                      tela: RelatorioScreen(),
+                      tela: RelatorioFinanceiroScreen(),
                       cor: Colors.indigo,
                     ),
 
