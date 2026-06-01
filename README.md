@@ -1,3 +1,4 @@
+<img width="1280" height="866" alt="docecontrol" src="https://github.com/user-attachments/assets/3ee702c3-d541-4638-b0e2-34d73bf4a379" />
 # Doce Control 🍩
 
 O **Doce Control** é um aplicativo mobile desenvolvido para auxiliar pequenos empreendedores do ramo da confeitaria a gerirem os seus negócios de forma profissional e organizada.
@@ -5,8 +6,7 @@ O **Doce Control** é um aplicativo mobile desenvolvido para auxiliar pequenos e
 ## 📱 Visual do Projeto
 
 
-
-<img width="1600" height="1251" alt="e85c16b8-ad0e-45ed-b7a0-38327d6966e5" src="https://github.com/user-attachments/assets/bdf8c72e-3d25-4c8a-b2a1-dc5ffa10bdc9" />
+<img width="1280" height="866" alt="docecontrol" src="https://github.com/user-attachments/assets/5bf5c286-ffd6-4f00-89cb-6deb30691631" />
 
 
 ## 🚀 Funcionalidades (Etapa 3)
