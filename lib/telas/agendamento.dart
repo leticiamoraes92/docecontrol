@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import '../database/bancodados.dart';
 import '../widgets/widget_input.dart';
 import '../models/pedido_model.dart';
@@ -54,6 +55,9 @@ class _AgendamentoScreenState
   TextEditingController();
 
   final horarioController =
+  TextEditingController();
+
+  final cepController =
   TextEditingController();
 
   final enderecoController =
@@ -164,6 +168,50 @@ class _AgendamentoScreenState
     }
   }
 
+  Future<void> buscarCep() async {
+
+    String cep =
+    cepController.text
+        .replaceAll('-', '')
+        .trim();
+
+    if (cep.isEmpty) return;
+
+    try {
+
+      final response =
+      await http.get(
+        Uri.parse(
+          'https://viacep.com.br/ws/$cep/json/',
+        ),
+      );
+
+      if (response.statusCode == 200) {
+
+        final dados =
+        jsonDecode(response.body);
+
+        setState(() {
+
+          enderecoController.text =
+          "${dados['logradouro']}, "
+              "${dados['bairro']} - "
+              "${dados['localidade']}/${dados['uf']}";
+        });
+      }
+
+    } catch (e) {
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Erro ao buscar CEP',
+          ),
+        ),
+      );
+    }
+  }
   void salvar() async {
 
     if (clienteSelecionado == null ||
@@ -834,9 +882,27 @@ class _AgendamentoScreenState
                     ),
 
                     InputTextos(
+                      "CEP",
+                      controller: cepController,
+                    ),
+
+                    const SizedBox(
+                      height: 12,
+                    ),
+
+                    ElevatedButton.icon(
+                      onPressed: buscarCep,
+                      icon: const Icon(Icons.search),
+                      label: const Text("Buscar CEP"),
+                    ),
+
+                    const SizedBox(
+                      height: 16,
+                    ),
+
+                    InputTextos(
                       "Endereço Completo",
-                      controller:
-                      enderecoController,
+                      controller: enderecoController,
                     ),
                   ],
                 ],

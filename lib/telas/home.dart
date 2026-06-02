@@ -5,6 +5,9 @@ import 'decoracao.dart';
 import 'controle_agendamento.dart';
 import 'relatorio.dart';
 import 'lista_mercado.dart';
+import 'configuracoes.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatelessWidget {
 
@@ -70,69 +73,6 @@ class HomeScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget cardInfo({
-    required IconData icon,
-    required String titulo,
-    required String valor,
-    required Color cor,
-  }) {
-
-    return Expanded(
-      child: Container(
-
-        margin: EdgeInsets.symmetric(horizontal: 4),
-
-        padding: EdgeInsets.symmetric(vertical: 12),
-
-        decoration: BoxDecoration(
-          color: Colors.white,
-
-          borderRadius: BorderRadius.circular(18),
-
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 5,
-            ),
-          ],
-        ),
-
-        child: Column(
-          children: [
-
-            Icon(
-              icon,
-              color: cor,
-              size: 20,
-            ),
-
-            SizedBox(height: 6),
-
-            Text(
-              valor,
-
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            SizedBox(height: 2),
-
-            Text(
-              titulo,
-
-              style: TextStyle(
-                color: Colors.grey[700],
-                fontSize: 13,
               ),
             ),
           ],
@@ -214,34 +154,6 @@ class HomeScreen extends StatelessWidget {
                       fontSize: 15,
                     ),
                   ),
-
-                  SizedBox(height: 14),
-
-                  Row(
-                    children: [
-
-                      cardInfo(
-                        icon: Icons.shopping_bag,
-                        titulo: "Pedidos",
-                        valor: "0",
-                        cor: Colors.pink,
-                      ),
-
-                      cardInfo(
-                        icon: Icons.attach_money,
-                        titulo: "Faturamento",
-                        valor: "R\$ 0.00",
-                        cor: Colors.green,
-                      ),
-
-                      cardInfo(
-                        icon: Icons.pending_actions,
-                        titulo: "Pendentes",
-                        valor: "0",
-                        cor: Colors.orange,
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -311,6 +223,14 @@ class HomeScreen extends StatelessWidget {
                       titulo: "Mercado",
                       tela: ListaMercadoScreen(),
                       cor: Colors.redAccent,
+                    ),
+
+                    itemMenu(
+                      context: context,
+                      icone: Icons.settings,
+                      titulo: "Configurações",
+                      tela: ConfiguracoesScreen(),
+                      cor: Colors.blue,
                     ),
                   ],
                 ),

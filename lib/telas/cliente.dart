@@ -103,7 +103,6 @@ class _ClienteScreenState extends State<ClienteScreen> {
     }
   }
 
-  // EXCLUIR CLIENTE
   void excluirCliente(int id) async {
 
     await BancoDados.excluirCliente(id);
