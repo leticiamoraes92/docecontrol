@@ -6,7 +6,8 @@ O **Doce Control** é um aplicativo mobile desenvolvido para auxiliar pequenos e
 ## 📱 Visual do Projeto
 
 
-<img width="1280" height="866" alt="docecontrol" src="https://github.com/user-attachments/assets/5bf5c286-ffd6-4f00-89cb-6deb30691631" />
+<img width="1280" height="902" alt="WhatsApp Image 2026-06-02 at 12 31 20" src="https://github.com/user-attachments/assets/b9d8c1f3-5b66-43d4-84eb-ed1a50780175" />
+
 
 
 ## 🚀 Funcionalidades (Etapa 3)
